@@ -3,7 +3,7 @@ public class Particle{
   PVector vel;
   PVector acc;
   
-  int maxSpeed = 2;
+  //int maxSpeed = 10;
   
   //Particle(PVector pos, PVector vel, PVector acc){
     Particle(){
@@ -13,11 +13,14 @@ public class Particle{
      this.acc = new PVector(0,0);
   }
   
-  void update(){
+  void update(float maxSpeed){
      this.vel.add(this.acc);
      this.pos.add(this.vel);
      this.vel.limit(maxSpeed);
+     //this.vel.mult(0);
      this.acc.mult(0);
+     
+     //println(" Current speed - ", this.vel); 
   }
   
   void moveParticle(PVector force){
@@ -26,7 +29,7 @@ public class Particle{
   
   void show(){
     stroke(0);
-    strokeWeight(2);
+    strokeWeight(4);
     point(this.pos.x, this.pos.y);
   }
   

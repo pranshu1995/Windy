@@ -4,11 +4,13 @@ int scale = 20;
 int rows;
 int cols;
 
+int particleCount = 100;
+
 PVector frc;
 
 PVector[] flowfield;
 
-Particle[] particles = new Particle[500];
+Particle[] particles = new Particle[particleCount];
 
 float zoff = 0;
 
@@ -17,7 +19,8 @@ int secondaryindex = 1; // Persistency loop variable
 
 String[] timeStamps;
 float[] windDirectionArray;
-Table windDirecrion;
+float[] windSpeedArray;
+Table windDirecrion, windSpeed;
 
 // Date, time parameters for data retrieval
 // Entering inappropriate time will lead to crash
@@ -36,20 +39,23 @@ void setup() {
   
   flowfield = new PVector[cols*rows];
   
-  for( int i=0; i<500; i++){
+  for( int i=0; i<particleCount; i++){
     particles[i] = new Particle();
   }
   
   // Load Wind Speed data from EIF portal in CSV format
-  windDirecrion = loadTable("https://eif-research.feit.uts.edu.au/api/csv/?rFromDate=" + fromDate + "T" + startHour + "%3A00%3A00&rToDate=" + toDate + "T" + endHour + "%3A00%3A00&rFamily=weather&rSensor=WD", "csv");
-
+  windDirecrion = loadTable("https://eif-research.feit.uts.edu.au/api/csv/?rFromDate=" + fromDate + "T" + startHour + "%3A00%3A00&rToDate=" + toDate + "T" + endHour + "%3A00%3A00&rFamily=weather&rSensor=IWD", "csv");
+  windSpeed = loadTable("https://eif-research.feit.uts.edu.au/api/csv/?rFromDate=" + fromDate + "T" + startHour + "%3A00%3A00&rToDate=" + toDate + "T" + endHour + "%3A00%3A00&rFamily=weather&rSensor=IWS", "csv");
+  
   // Extract data from CSV
   windDirectionArray = new float[windDirecrion.getRowCount()];
+  windSpeedArray = new float[windSpeed.getRowCount()];
   timeStamps = new String[windDirecrion.getRowCount()];
   
   for (int i = 0; i < windDirecrion.getRowCount(); i++){
     timeStamps[i] = windDirecrion.getString(i,0);
     windDirectionArray[i] = windDirecrion.getFloat(i,1);
+    windSpeedArray[i] = windSpeed.getFloat(i,1);
   }
 }
 
@@ -66,7 +72,8 @@ void draw() {
       float angle = windDirectionArray[primaryIndex];
       
       PVector vel = PVector.fromAngle(radians(angle));
-      vel.setMag(0.1);
+      
+      vel.setMag(1);
       
       flowfield[index] = vel;
       
@@ -87,11 +94,11 @@ void draw() {
     zoff += 0.001;
     
   }
+  float instVel = map(windSpeedArray[primaryIndex], 0, 30, 0, 8);
   
-  for( int i=0; i<500; i++){
-      //println("lengtho", flowfield.length);
+  for(int i=0; i<particleCount; i++){
       particles[i].follow(flowfield);
-      particles[i].update();
+      particles[i].update(instVel);
       particles[i].show();
       particles[i].edges();
   }
@@ -108,7 +115,4 @@ void draw() {
     }
   }
   secondaryindex = secondaryindex + 1;
-  
-  
-  
 }
