@@ -3,7 +3,7 @@ public class Particle{
   PVector vel;
   PVector acc;
   
-  int maxSpeed = 4;
+  int maxSpeed = 2;
   
   //Particle(PVector pos, PVector vel, PVector acc){
     Particle(){
