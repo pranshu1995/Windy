@@ -67,11 +67,16 @@ void draw() {
     float xoff = 0;
     for (int x = 0; x < cols; x++) {
       int index = x + y * cols;
-      
-      //float angle = noise(xoff, yoff, zoff) * TWO_PI;
+            
+      // determine angle for flow field from data
       float angle = windDirectionArray[primaryIndex];
       
-      PVector vel = PVector.fromAngle(radians(angle));
+      // introduce minor deviations in the angle using noise
+      float magnitude = 50.0;
+      float deviate = angle + (noise(xoff,yoff,zoff) * magnitude);
+      
+      // set velocity to angle
+      PVector vel = PVector.fromAngle(radians(deviate));
       
       vel.setMag(1);
       
@@ -115,4 +120,18 @@ void draw() {
     }
   }
   secondaryindex = secondaryindex + 1;
+  
+  //show area for mouse interaction
+  mouseArea();
+}
+
+void mouseArea() {
+  pushStyle();
+  stroke(255, 0, 0);
+  strokeWeight(2);
+  point(mouseX, mouseY);
+  rectMode(CENTER);
+  fill(255, 0, 0, 50);
+  ellipse(mouseX, mouseY, 100, 100);
+  popStyle();
 }
