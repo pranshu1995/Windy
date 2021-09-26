@@ -12,6 +12,8 @@ PVector[] flowfield;
 
 Particle[] particles = new Particle[particleCount];
 
+Background myBackground;
+
 float zoff = 0;
 
 int primaryIndex = 0; // Main array loop variable
@@ -32,7 +34,11 @@ String startHour = "13";  // Value: 00-23
 String endHour = "13";  // Value: 00-23
 
 void setup() {
-  size(600, 600);
+  size(800, 600);
+  
+  //Background(sand dune) 
+  myBackground =  new Background( new PVector(0.0,0.0));
+  
   //background(255);
   rows = floor(height/scale) + 1;
   cols = floor(width/scale) + 1;
@@ -46,7 +52,7 @@ void setup() {
   // Load Wind Speed data from EIF portal in CSV format
   windDirecrion = loadTable("https://eif-research.feit.uts.edu.au/api/csv/?rFromDate=" + fromDate + "T" + startHour + "%3A00%3A00&rToDate=" + toDate + "T" + endHour + "%3A00%3A00&rFamily=weather&rSensor=IWD", "csv");
   windSpeed = loadTable("https://eif-research.feit.uts.edu.au/api/csv/?rFromDate=" + fromDate + "T" + startHour + "%3A00%3A00&rToDate=" + toDate + "T" + endHour + "%3A00%3A00&rFamily=weather&rSensor=IWS", "csv");
-  
+
   // Extract data from CSV
   windDirectionArray = new float[windDirecrion.getRowCount()];
   windSpeedArray = new float[windSpeed.getRowCount()];
@@ -60,7 +66,10 @@ void setup() {
 }
 
 void draw() {
-  background(255);
+  background(169, 231, 241);
+  //Background for sand and plants
+  myBackground.draw(PVector.fromAngle(radians(windDirectionArray[primaryIndex])));
+
   float yoff = 0;
   //loadPixels();
   for (int y = 0; y < rows; y++) {
@@ -77,6 +86,8 @@ void draw() {
       
       flowfield[index] = vel;
       
+      // Background(sand dune) 
+      //myBackground.draw(vel);
       xoff += inc;
       
       stroke(0);
@@ -85,7 +96,7 @@ void draw() {
       strokeWeight(1);
       translate(x * scale, y * scale);
       rotate(vel.heading());
-      line(0, 0, scale, 0);
+   //   line(0, 0, scale, 0); display line
       
       pop();
       
@@ -96,12 +107,16 @@ void draw() {
   }
   float instVel = map(windSpeedArray[primaryIndex], 0, 30, 0, 8);
   
+
   for(int i=0; i<particleCount; i++){
       particles[i].follow(flowfield);
       particles[i].update(instVel);
       particles[i].show();
       particles[i].edges();
   }
+
+  
+  
   //updatePixels();
   //noLoop();
   //println(frameRate);
