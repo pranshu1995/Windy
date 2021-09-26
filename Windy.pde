@@ -12,6 +12,8 @@ PVector[] flowfield;
 
 Particle[] particles = new Particle[particleCount];
 
+Background myBackground;
+
 float zoff = 0;
 
 int primaryIndex = 0; // Main array loop variable
@@ -32,7 +34,11 @@ String startHour = "13";  // Value: 00-23
 String endHour = "13";  // Value: 00-23
 
 void setup() {
-  size(600, 600);
+  size(800, 600);
+  
+  //Background(sand dune) 
+  myBackground =  new Background( new PVector(0.0,0.0));
+  
   //background(255);
   rows = floor(height/scale) + 1;
   cols = floor(width/scale) + 1;
@@ -60,7 +66,10 @@ void setup() {
 }
 
 void draw() {
-  background(255);
+  background(169, 231, 241);
+  //Background for sand and plants
+  myBackground.draw(PVector.fromAngle(radians(windDirectionArray[primaryIndex])));
+
   float yoff = 0;
   //loadPixels();
   for (int y = 0; y < rows; y++) {
@@ -81,7 +90,9 @@ void draw() {
       vel.setMag(1);
 
       flowfield[index] = vel;
-
+      
+      // Background(sand dune) 
+      //myBackground.draw(vel);
       xoff += inc;
 
       stroke(0);
@@ -90,8 +101,9 @@ void draw() {
       strokeWeight(1);
       translate(x * scale, y * scale);
       rotate(vel.heading());
-      //line(0, 0, scale, 0);
 
+   //   line(0, 0, scale, 0); display line
+      
       pop();
     }
     yoff += inc;
@@ -110,6 +122,9 @@ void draw() {
       particles[i].clicked(mouseX,mouseY);
     }
   }
+
+  
+  
   //updatePixels();
   //noLoop();
   //println(frameRate);
