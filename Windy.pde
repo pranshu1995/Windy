@@ -4,7 +4,7 @@ int scale = 20;
 int rows;
 int cols;
 
-int particleCount = 500;
+int particleCount = 1000;
 
 PVector frc;
 
@@ -90,7 +90,7 @@ void draw() {
       strokeWeight(1);
       translate(x * scale, y * scale);
       rotate(vel.heading());
-      line(0, 0, scale, 0);
+      //line(0, 0, scale, 0);
 
       pop();
     }
@@ -124,7 +124,7 @@ void draw() {
   secondaryindex = secondaryindex + 1;
 
   //show area for mouse interaction
-  mouseArea();
+  //mouseArea();
 }
 
 void mouseArea() {

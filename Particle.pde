@@ -59,16 +59,22 @@ public class Particle {
   void clicked(float px, float py) {
     // find distance between particle and mouse click
     float d = dist(px, py, this.pos.x, this.pos.y);
-    
+
     // if the particle is within the interaction area, do something
     if (d < 50) {
-      
+
       // hold particles at a velocity and acceleration of 0
-      this.vel = PVector.fromAngle(radians(0));
-      this.acc.set(0,0);
-      
-      //println("CLICKED");
+       //this.vel = PVector.fromAngle(radians(0));
+       //this.acc.set(0,0);
+
+      // disperse particles
+      float theta = atan((py-this.pos.y)/(px-this.pos.x));
+      if (px<this.pos.x) {
+        theta += PI;
+      }
+      theta *= -1;
+      // set velocity to move away from mouse
+      this.vel.set(PVector.fromAngle(theta));
     }
-    
   }
 }
