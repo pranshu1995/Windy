@@ -4,13 +4,14 @@ int scale = 20;
 int rows;
 int cols;
 
-int particleCount = 1000;
+int particleCount = 500;
 
 PVector frc;
 
 PVector[] flowfield;
 
 Particle[] particles = new Particle[particleCount];
+color particleColor= color(230, 200, 130);
 
 Background myBackground;
 
@@ -33,6 +34,12 @@ String toDate = "2021-09-21";  // Format: YYYY-MM-DD
 String startHour = "13";  // Value: 00-23
 String endHour = "13";  // Value: 00-23
 
+// Variables for collision
+float spring = 1;
+float gravity = 0.1;
+float friction = -0.9;
+// End of variables for collision
+
 void setup() {
   size(800, 600);
   
@@ -46,7 +53,7 @@ void setup() {
   flowfield = new PVector[cols*rows];
 
   for ( int i=0; i<particleCount; i++) {
-    particles[i] = new Particle();
+    particles[i] = new Particle(i, particles);
   }
 
   // Load Wind Speed data from EIF portal in CSV format
@@ -113,6 +120,7 @@ void draw() {
 
   for (int i=0; i<particleCount; i++) {
     particles[i].follow(flowfield);
+    particles[i].collide();
     particles[i].update(instVel);
     particles[i].show();
     particles[i].edges();

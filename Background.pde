@@ -55,7 +55,7 @@
     float dx = map(velocity.x, -1, 1, -0.2, 0.2);
     float dy = map(velocity.y, -1, 1, -0.2, 0.2);
     PVector wind = new PVector(dx, dy);
-    println("wind",wind);
+    //println("wind",wind);
     ps.applyForce(wind);
     ps.run();
     ps1.applyForce(wind);
