@@ -41,9 +41,10 @@ class Particle2 {
 
   // Method to display
   void render() {
-    imageMode(CENTER);
+    //imageMode(CENTER);
     tint(tintColor,lifespan);
     image(img, loc.x, loc.y);
+    tint(255);
     // Drawing a circle instead
     // fill(255,lifespan);
     // noStroke();
