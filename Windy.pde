@@ -11,6 +11,9 @@ int cameraInput = 2;
 boolean microphoneCheck = false;
 boolean cameraCheck = false;
 
+
+
+
 float inc = 0.1;
 int scale = 20;
 int rows;
@@ -45,6 +48,7 @@ String toDate = "2021-09-21";  // Format: YYYY-MM-DD
 
 String startHour = "13";  // Value: 00-23
 String endHour = "13";  // Value: 00-23
+PFont font;
 
 // Variables for collision
 float spring = 1;
@@ -66,9 +70,9 @@ ControlP5 cp5;
 void setup() {
   size(800, 600);
 
-  //Background(sand dune)
-  myBackground =  new Background( new PVector(0.0, 0.0));
-
+  
+  setupBackground();
+  
   //background(255);
   rows = floor(height/scale) + 1;
   cols = floor(width/scale) + 1;
@@ -288,6 +292,7 @@ void mouseArea() {
   popStyle();
 }
 
+
 void mousePressed() {
   //microphoneToggle();
 }
@@ -330,3 +335,37 @@ float distSq(float x1, float y1, float z1, float x2, float y2, float z2) {
   return d;
 }
 // --- End color tracking helper functions   --- //
+
+//Date Time Picker//
+void controlEvent(ControlEvent theEvent) {
+     println("Clicked");
+     if(myBackground.currentBackgroundImageIndex == 0) {
+       PImage buttonImage = loadImage(myBackground.backgroundImagesName.get(0));//loadImage("water.jpg");
+       buttonImage.resize(70,70);
+       theEvent.controller().setImage(buttonImage);
+       myBackground.currentBackgroundImageIndex = 1;
+       //myBackground.
+     } else {
+       PImage buttonImage = loadImage(myBackground.backgroundImagesName.get(1));//loadImage("water.jpg");
+       buttonImage.resize(70,70);
+       theEvent.controller().setImage(buttonImage);
+       myBackground.currentBackgroundImageIndex = 0;
+     }
+}
+
+//Setting Button Image background 
+void setupBackground(){
+  myBackground =  new Background( new PVector(0.0,0.0));
+  cp5 = new ControlP5(this);
+  font = createFont("arial",20);
+  PImage buttonImage = loadImage(myBackground.backgroundImagesName.get(0));//loadImage("water.jpg");
+  buttonImage.resize(70,70);
+  cp5.addButton("changeImage")
+      .setValue(128)
+      .setPosition(width-100,50)
+      .setSize(70,70)
+      //.setFont(font)
+      .setImage(buttonImage);
+      //.updateSize();
+  //Background(sand dune) 
+}
