@@ -1,7 +1,3 @@
-import controlP5.*;
-ControlP5 cp5;
-
-
 
 float inc = 0.1;
 int scale = 20;
@@ -37,7 +33,6 @@ String toDate = "2021-09-21";  // Format: YYYY-MM-DD
 
 String startHour = "13";  // Value: 00-23
 String endHour = "13";  // Value: 00-23
-PFont font;
 
 // Variables for collision
 float spring = 1;
@@ -49,7 +44,8 @@ void setup() {
   size(800, 600);
   //fullScreen(P2D);
   
-  setupBackground();
+  //Background(sand dune) 
+  myBackground =  new Background( new PVector(0.0,0.0));
   
   //background(255);
   rows = floor(height/scale) + 1;
@@ -164,36 +160,4 @@ void mouseArea() {
   fill(255, 0, 0, 50);
   ellipse(mouseX, mouseY, 100, 100);
   popStyle();
-}
-
-void controlEvent(ControlEvent theEvent) {
-     println("Clicked");
-     if(myBackground.currentBackgroundImageIndex == 0) {
-       PImage buttonImage = loadImage(myBackground.backgroundImagesName.get(0));//loadImage("water.jpg");
-       buttonImage.resize(70,70);
-       theEvent.controller().setImage(buttonImage);
-       myBackground.currentBackgroundImageIndex = 1;
-       //myBackground.
-     } else {
-       PImage buttonImage = loadImage(myBackground.backgroundImagesName.get(1));//loadImage("water.jpg");
-       buttonImage.resize(70,70);
-       theEvent.controller().setImage(buttonImage);
-       myBackground.currentBackgroundImageIndex = 0;
-     }
-}
-
-void setupBackground(){
-  myBackground =  new Background( new PVector(0.0,0.0));
-  cp5 = new ControlP5(this);
-  font = createFont("arial",20);
-  PImage buttonImage = loadImage(myBackground.backgroundImagesName.get(0));//loadImage("water.jpg");
-  buttonImage.resize(70,70);
-  cp5.addButton("changeImage")
-      .setValue(128)
-      .setPosition(width-100,50)
-      .setSize(70,70)
-      //.setFont(font)
-      .setImage(buttonImage);
-      //.updateSize();
-  //Background(sand dune) 
 }
