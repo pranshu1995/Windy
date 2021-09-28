@@ -116,14 +116,19 @@ public class Particle {
        //this.vel = PVector.fromAngle(radians(0));
        //this.acc.set(0,0);
 
-      // disperse particles
-      float theta = atan((py-this.pos.y)/(px-this.pos.x));
-      if (px<this.pos.x) {
-        theta += PI;
-      }
-      theta *= -1;
-      // set velocity to move away from mouse
-      this.vel.set(PVector.fromAngle(theta));
+      //// disperse particles
+      //float theta = atan((py-this.pos.y)/(px-this.pos.x));
+      //if (px<this.pos.x) {
+      //  theta += PI;
+      //}
+      //theta *= -1;
+      //// set velocity to move away from mouse
+      //this.vel.set(PVector.fromAngle(theta));
+      
+      // improved disperse function
+      this.vel.x += map(d, 0, 50, 0.2, 0.1)*(this.pos.x - px);
+      this.vel.y += map(d, 0, 50, 0.2, 0.1)*(this.pos.y - py);
+      
     }
   }
 }

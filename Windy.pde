@@ -42,6 +42,7 @@ float friction = -0.9;
 
 void setup() {
   size(800, 600);
+  //fullScreen(P2D);
   
   //Background(sand dune) 
   myBackground =  new Background( new PVector(0.0,0.0));
