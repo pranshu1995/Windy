@@ -1,3 +1,8 @@
+import processing.sound.*;
+Amplitude amp;
+AudioIn in;
+
+Boolean microphoneCheck = false;
 
 float inc = 0.1;
 int scale = 20;
@@ -71,6 +76,11 @@ void setup() {
     windDirectionArray[i] = windDirecrion.getFloat(i, 1);
     windSpeedArray[i] = windSpeed.getFloat(i, 1);
   }
+  
+  amp = new Amplitude(this);
+  in = new AudioIn(this, 0);
+  ////in.start();
+  //amp.input(in);
 }
 
 void draw() {
@@ -118,11 +128,13 @@ void draw() {
     zoff += 0.001;
   }
   float instVel = map(windSpeedArray[primaryIndex], 0, 30, 0, 8);
-
+   
+    
   for (int i=0; i<particleCount; i++) {
     particles[i].follow(flowfield);
     particles[i].collide();
-    particles[i].update(instVel);
+    float microphoneInput = map(amp.analyze(), 0, 1, 0, 50);
+    particles[i].update(instVel, microphoneInput);
     particles[i].show();
     particles[i].edges();
 
@@ -160,4 +172,22 @@ void mouseArea() {
   fill(255, 0, 0, 50);
   ellipse(mouseX, mouseY, 100, 100);
   popStyle();
+}
+
+void mousePressed() {
+  microphoneToggle();
+
+}
+
+void microphoneToggle(){
+  if(microphoneCheck == true){
+    in.stop();
+  }
+  else{
+    in = new AudioIn(this, 0);
+    in.start();
+    amp.input(in);
+  }  
+  microphoneCheck = !microphoneCheck;
+  println("newVal ", microphoneCheck);
 }

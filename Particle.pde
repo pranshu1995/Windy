@@ -22,10 +22,10 @@ public class Particle {
 
   }
 
-  void update(float maxSpeed) {
+  void update(float maxSpeed, float microphone) {
     this.vel.add(this.acc);
     this.pos.add(this.vel);
-    this.vel.limit(maxSpeed);
+    this.vel.limit(maxSpeed + microphone);
     //this.vel.mult(0);
     this.acc.mult(0);
 
