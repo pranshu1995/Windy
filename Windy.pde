@@ -1,5 +1,6 @@
 import processing.sound.*;
 Amplitude amp;
+SoundFile sample;
 AudioIn in;
 
 Boolean microphoneCheck = false;
@@ -81,6 +82,10 @@ void setup() {
   in = new AudioIn(this, 0);
   ////in.start();
   //amp.input(in);
+  
+    // Load and play a soundfile and loop it.
+  sample = new SoundFile(this, "desert_wind.mp3");
+  sample.loop();
 }
 
 void draw() {
@@ -128,6 +133,9 @@ void draw() {
     zoff += 0.001;
   }
   float instVel = map(windSpeedArray[primaryIndex], 0, 30, 0, 8);
+  
+  float volume = map(instVel, 0, 8, 0, 1);
+  sample.amp(volume);
    
     
   for (int i=0; i<particleCount; i++) {
@@ -182,11 +190,13 @@ void mousePressed() {
 void microphoneToggle(){
   if(microphoneCheck == true){
     in.stop();
+    sample.play();
   }
   else{
     in = new AudioIn(this, 0);
     in.start();
     amp.input(in);
+    sample.pause();
   }  
   microphoneCheck = !microphoneCheck;
   println("newVal ", microphoneCheck);
