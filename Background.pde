@@ -55,7 +55,7 @@
     }
     
     void draw(PVector vel){
-      print("vel",PVector.angleBetween(vel,PVector.fromAngle(0)));
+      //print("vel",PVector.angleBetween(vel,PVector.fromAngle(0)));
       //if(PVector.angleBetween(vel,PVector.fromAngle(0)) > 2.5){
       //  image(desert_3PIBY4,0,0);
       //} else {
@@ -85,7 +85,7 @@
     float dy = map(velocity.y, -1, 1, -0.2, 0.2);
     if(currentBackgroundImageIndex == 0){
       PVector wind = new PVector(dx, dy);
-      println("wind",wind);
+     // println("wind",wind);
       for(int i = 0; i< numParticleSystems; i++){
         ParticleSystem ps = particleSystems.get(i);
         ps.applyForce(wind);
