@@ -128,7 +128,18 @@ public class Particle {
       // improved disperse function
       this.vel.x += map(d, 0, 50, 0.2, 0.1)*(this.pos.x - px);
       this.vel.y += map(d, 0, 50, 0.2, 0.1)*(this.pos.y - py);
-      
     }
   }
+  
+  void pressedSpace(float cx, float cy) {
+    // find distance between particle and tracked color
+    float d = dist(cx, cy, this.pos.x, this.pos.y);
+
+    // if the particle is within the interaction area, do something
+    if (d < 50) {
+      this.vel.x += map(d, 0, 50, 0.2, 0.1)*(this.pos.x - cx);
+      this.vel.y += map(d, 0, 50, 0.2, 0.1)*(this.pos.y - cy);
+    }
+  }
+  
 }

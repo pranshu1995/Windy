@@ -1,3 +1,4 @@
+import processing.video.*;
 import processing.sound.*;
 Amplitude amp;
 SoundFile sample;
@@ -46,13 +47,19 @@ float gravity = 0.1;
 float friction = -0.9;
 // End of variables for collision
 
+// --- Start global variables for color tracking  --- //
+Capture video;
+color trackColor;
+float threshold = 25;
+// --- End global variables for color tracking    --- //
+
 void setup() {
   size(800, 600);
   //fullScreen(P2D);
-  
-  //Background(sand dune) 
-  myBackground =  new Background( new PVector(0.0,0.0));
-  
+
+  //Background(sand dune)
+  myBackground =  new Background( new PVector(0.0, 0.0));
+
   //background(255);
   rows = floor(height/scale) + 1;
   cols = floor(width/scale) + 1;
@@ -77,21 +84,79 @@ void setup() {
     windDirectionArray[i] = windDirecrion.getFloat(i, 1);
     windSpeedArray[i] = windSpeed.getFloat(i, 1);
   }
-  
+
   amp = new Amplitude(this);
   in = new AudioIn(this, 0);
   ////in.start();
   //amp.input(in);
-  
-    // Load and play a soundfile and loop it.
+
+  // Load and play a soundfile and loop it.
   sample = new SoundFile(this, "desert_wind.mp3");
   sample.loop();
+
+  // --- Start setup for color tracking  --- //
+  String[] cameras = Capture.list();
+  printArray(cameras);
+  video = new Capture(this, width, height, cameras[2]);
+  video.start();
+  trackColor = color(255, 0, 0);    // red
+  // --- End setup for color tracking   --- //
 }
 
 void draw() {
   background(169, 231, 241);
   //Background for sand and plants
   myBackground.draw(PVector.fromAngle(radians(windDirectionArray[primaryIndex])));
+  
+  // --- Start draw method for track color --- //
+  video.loadPixels();
+  imageMode(CORNER);
+  image(video, 0, 0, width/4, height/4); // show video capture
+
+  threshold = 90;
+  float avgX = 0;
+  float avgY = 0;
+  int count = 0;
+
+  // loop through all pixels within video capture
+  for (int x = 0; x < video.width; x++ ) {
+    for (int y = 0; y < video.height; y++ ) {
+      int loc = x + y * video.width;
+
+      // determine current color
+      color currentColor = video.pixels[loc];
+      float r1 = red(currentColor);
+      float g1 = green(currentColor);
+      float b1 = blue(currentColor);
+      float r2 = red(trackColor);
+      float g2 = green(trackColor);
+      float b2 = blue(trackColor);
+
+      // calculate distance between pixels
+      float d = distSq(r1, g1, b1, r2, g2, b2);
+
+      if (d < threshold*threshold) {
+        //stroke(255);
+        //strokeWeight(1);
+        //point(x, y);
+        avgX += x;
+        avgY += y;
+        count ++;
+      }
+    }
+  }
+  if (count > 0) {
+    avgX = avgX / count;
+    avgY = avgY / count;
+    // Draw a circle at the tracked pixel same color
+    pushStyle();
+    fill(trackColor);
+    noStroke();
+    ellipse(avgX, avgY, 10, 10);
+    popStyle();
+  }
+  //println(avgX, avgY);
+  // --- End draw method for track color --- //
 
   float yoff = 0;
   //loadPixels();
@@ -113,8 +178,8 @@ void draw() {
       vel.setMag(1);
 
       flowfield[index] = vel;
-      
-      // Background(sand dune) 
+
+      // Background(sand dune)
       //myBackground.draw(vel);
       xoff += inc;
 
@@ -125,19 +190,19 @@ void draw() {
       translate(x * scale, y * scale);
       rotate(vel.heading());
 
-   //   line(0, 0, scale, 0); display line
-      
+      //   line(0, 0, scale, 0); display line
+
       pop();
     }
     yoff += inc;
     zoff += 0.001;
   }
   float instVel = map(windSpeedArray[primaryIndex], 0, 30, 0, 8);
-  
+
   float volume = map(instVel, 0, 8, 0, 1);
   sample.amp(volume);
-   
-    
+
+
   for (int i=0; i<particleCount; i++) {
     particles[i].follow(flowfield);
     particles[i].collide();
@@ -148,12 +213,16 @@ void draw() {
 
     // if mouse is pressed call clicked function
     if (mousePressed == true) {
-      particles[i].clicked(mouseX,mouseY);
+      particles[i].clicked(mouseX, mouseY);
+    }
+
+    if (keyPressed == true) {
+      particles[i].pressedSpace(avgX, avgY);
     }
   }
 
-  
-  
+
+
   //updatePixels();
   //noLoop();
   //println(frameRate);
@@ -167,8 +236,7 @@ void draw() {
   }
   secondaryindex = secondaryindex + 1;
 
-  //show area for mouse interaction
-  //mouseArea();
+  
 }
 
 void mouseArea() {
@@ -184,20 +252,29 @@ void mouseArea() {
 
 void mousePressed() {
   microphoneToggle();
-
 }
 
-void microphoneToggle(){
-  if(microphoneCheck == true){
+void microphoneToggle() {
+  if (microphoneCheck == true) {
     in.stop();
     sample.play();
-  }
-  else{
+  } else {
     in = new AudioIn(this, 0);
     in.start();
     amp.input(in);
     sample.pause();
-  }  
+  }
   microphoneCheck = !microphoneCheck;
   println("newVal ", microphoneCheck);
 }
+
+// --- Start color tracking helper functions   --- //
+void captureEvent(Capture video) {
+  video.read();
+}
+
+float distSq(float x1, float y1, float z1, float x2, float y2, float z2) {
+  float d = (x2-x1)*(x2-x1) + (y2-y1)*(y2-y1) +(z2-z1)*(z2-z1);
+  return d;
+}
+// --- End color tracking helper functions   --- //
