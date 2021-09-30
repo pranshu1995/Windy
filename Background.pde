@@ -1,17 +1,25 @@
 
- color firstDesertColor = color(236, 141, 91);
- color secondDesertColor = color(236, 141, 91);
+ color firstDesertColor = color(255, 252, 161);
+ color secondDesertColor = color(255, 242, 150);
+ color thirdDesertColor = color(255, 232, 139);
+
+ color topViewDesertColor = color(236, 141, 91);
  int numParticleSystems = 20;
  public class Background{
     PVector velocity;
     PImage desert_PIBY4;
-    PImage desert_3PIBY4;
     PFont Font;
     ArrayList<ParticleSystem> particleSystems; 
     ArrayList<String> backgroundImagesName;
     ArrayList<PImage> backgroundImages;
     int currentBackgroundImageIndex;
     
+     ParticleSystem ps, ps1, ps2, ps3, ps4, ps5;
+     
+     ParticleSystem ds1;
+     ParticleSystem ds2;
+     ParticleSystem ds3;
+     ParticleSystem ds4;
 
      SmallPlant smallPlant2;
      SmallPlant smallPlant3;
@@ -22,18 +30,24 @@
      
       Background(PVector vel){
       Font = createFont("Helvetica-Bold", 30);
-      //desert_PIBY4 = loadImage("sand-texture_PI4.jpg");
-      desert_3PIBY4 = loadImage("sand-texture_3PIBY4.jpg");
-      //desert_PIBY4.resize(1600,1600);
-      desert_3PIBY4.resize(800,600);
-      
       this.velocity = vel;  
 
       particleSystems = new ArrayList<ParticleSystem>();
       
       PImage img = loadImage("texture.png");
+      ps = new ParticleSystem(0, new PVector(3*width/4, height/2+20), img,firstDesertColor);
+      ps1 = new ParticleSystem(0, new PVector(3*width/4+20, height/2), img,firstDesertColor);
+      ps2 = new ParticleSystem(0, new PVector(3*width/4+70, height/2-20), img,firstDesertColor);
+      ps3 = new ParticleSystem(0, new PVector(3*width/4+30, height/2-10), img,firstDesertColor);
+      ps4 = new ParticleSystem(0, new PVector(3*width/4+30, height/2-10), img,firstDesertColor);
+      ps5 = new ParticleSystem(0, new PVector(3*width/4+30, height/2-10), img,firstDesertColor);
+      
+      ds1 = new ParticleSystem(0, new PVector(width/2-80,height/2+90), img,secondDesertColor);
+      ds2 = new ParticleSystem(0, new PVector(width/2-50,height/2+40), img,secondDesertColor);
+      ds3 = new ParticleSystem(0, new PVector(width/2-50,height/2+20), img,secondDesertColor);
+      ds4 = new ParticleSystem(0, new PVector(width/2-40,height/2+60), img,secondDesertColor);
       for(int i = 0; i< numParticleSystems; i++){
-        particleSystems.add(new ParticleSystem(0, new PVector(random(0,width), random(0,height)), img,firstDesertColor));
+        particleSystems.add(new ParticleSystem(0, new PVector(random(0,width), random(0,height)), img,topViewDesertColor));
       }
       currentBackgroundImageIndex=0;
       backgroundImagesName = new ArrayList<String>();
@@ -54,53 +68,35 @@
       smallPlant7 = new SmallPlant(new PVector(2*width/4, 7*height/10),100,10,velocity);
     }
     
-    void draw(PVector vel){
-      //print("vel",PVector.angleBetween(vel,PVector.fromAngle(0)));
-      //if(PVector.angleBetween(vel,PVector.fromAngle(0)) > 2.5){
-      //  image(desert_3PIBY4,0,0);
-      //} else {
-      //  image(desert_PIBY4,0,0);
-      //}
-      fill(51, 102, 255);
-      textFont(Font);
-      //text("Hello",width/2,height/2);
-
-      float angle = PVector.angleBetween(vel,PVector.fromAngle(0));
-      
-      push();
-      translate(width/2, height/2);
-      if(currentBackgroundImageIndex == 0){
-        rotate(vel.heading()+PI/4);
+    void draw(PVector vel, boolean sideView){
+      if(!sideView){
+        fill(51, 102, 255);
+        textFont(Font);
+        float angle = PVector.angleBetween(vel,PVector.fromAngle(0));
+        push();
+        translate(width/2, height/2);
+        if(currentBackgroundImageIndex == 0){
+          rotate(vel.heading()+PI/4);
+        } else {
+          rotate(vel.heading());
+        }
+        image(backgroundImages.get(currentBackgroundImageIndex),-width,-height);
+        pop();
+        this.velocity = vel;
+        this.velocity.setMag(2);
+        float dx = map(velocity.x, -1, 1, -0.2, 0.2);
+        float dy = map(velocity.y, -1, 1, -0.2, 0.2);
+        if(currentBackgroundImageIndex == 0){
+          PVector wind = new PVector(dx, dy);
+          for(int i = 0; i< numParticleSystems; i++){
+            ParticleSystem ps = particleSystems.get(i);
+            ps.applyForce(wind);
+            ps.run();
+            ps.addParticle();
+          }
+        }
       } else {
-        rotate(vel.heading());
-      }
-
-      image(backgroundImages.get(currentBackgroundImageIndex),-width,-height);
-      pop();
-      //text(vel.heading(),width/2,height/2);
       
-      this.velocity = vel;
-      this.velocity.setMag(2);
-      float dx = map(velocity.x, -1, 1, -0.2, 0.2);
-    float dy = map(velocity.y, -1, 1, -0.2, 0.2);
-    if(currentBackgroundImageIndex == 0){
-      PVector wind = new PVector(dx, dy);
-     // println("wind",wind);
-      for(int i = 0; i< numParticleSystems; i++){
-        ParticleSystem ps = particleSystems.get(i);
-        ps.applyForce(wind);
-        ps.run();
-        ps.addParticle();
-      }
-    }
-   
-    
-    
-      
-      
-
-     // return;
-      /*
       this.velocity = vel;
       noStroke();
       fill(255, 243, 77);
@@ -117,51 +113,51 @@
       smallPlant7.draw(vel);
       // Calculate a "wind" force based on mouse horizontal position
       //background(0);
-    float dx = map(velocity.x, -1, 1, -0.2, 0.2);
-    float dy = map(velocity.y, -1, 1, -0.2, 0.2);
-    PVector wind = new PVector(dx, dy);
-    //println("wind",wind);
-    ps.applyForce(wind);
-    ps.run();
-    ps1.applyForce(wind);
-    ps1.run();
-    ps2.applyForce(wind);
-    ps2.run();
-    ps3.applyForce(wind);
-    ps3.run();
-    ps4.applyForce(wind);
-    ps4.run();
-    ps5.applyForce(wind);
-    ps5.run();
-    
-    ds1.applyForce(wind);
-    ds1.run();
-    ds2.applyForce(wind);
-    ds2.run();
-    ds3.applyForce(wind);
-    ds3.run();
-    ds4.applyForce(wind);
-    ds4.run();
-    for (int i = 0; i < 1; i++) {
-      ps.addParticle();
-      ps1.addParticle();
-      ps2.addParticle();
-      ps3.addParticle();
-      ps4.addParticle();
-      ps5.addParticle();
+      float dx = map(velocity.x, -1, 1, -0.2, 0.2);
+      float dy = map(velocity.y, -1, 1, -0.2, 0.2);
+      PVector wind = new PVector(dx, dy);
+      //println("wind",wind);
+      ps.applyForce(wind);
+      ps.run();
+      ps1.applyForce(wind);
+      ps1.run();
+      ps2.applyForce(wind);
+      ps2.run();
+      ps3.applyForce(wind);
+      ps3.run();
+      ps4.applyForce(wind);
+      ps4.run();
+      ps5.applyForce(wind);
+      ps5.run();
       
-      ds1.addParticle();
-      ds2.addParticle();
-      ds3.addParticle();
-      ds4.addParticle();
+      ds1.applyForce(wind);
+      ds1.run();
+      ds2.applyForce(wind);
+      ds2.run();
+      ds3.applyForce(wind);
+      ds3.run();
+      ds4.applyForce(wind);
+      ds4.run();
+      for (int i = 0; i < 1; i++) {
+        ps.addParticle();
+        ps1.addParticle();
+        ps2.addParticle();
+        ps3.addParticle();
+        ps4.addParticle();
+        ps5.addParticle();
+        
+        ds1.addParticle();
+        ds2.addParticle();
+        ds3.addParticle();
+        ds4.addParticle();
       }
-      */
     }
+  }
     
     
    void drawDeserts(){ 
      
-   //  fill(thirdDesertColor);
+     fill(thirdDesertColor);
      noStroke();
      rect(0,height - height/3, width, height/3);
      

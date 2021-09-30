@@ -217,6 +217,7 @@ void draw() {
   //println(avgX, avgY);
   // --- End draw method for track color --- //
 
+
   float yoff = 0;
   //loadPixels();
   for (int y = 0; y < rows; y++) {
