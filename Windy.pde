@@ -88,7 +88,7 @@ void setup() {
   calendarImage.resize(30,30);
   cp5.addButton("selectDateTime")
        .setValue(50)
-       .setPosition(width -100,10)
+       .setPosition(width -50,5)
        .setSize(30,30)
        .setImage(calendarImage);
 }
@@ -400,17 +400,15 @@ void controlEvent(ControlEvent theEvent) {
        }
      }else if(theEvent.isAssignableFrom(Button.class)){
        if(theEvent.getName() == "changeBackground"){
-         if(myBackground.currentBackgroundImageIndex == 0) {
+         myBackground.sideView = !myBackground.sideView;
+         if(myBackground.sideView) {
            PImage buttonImage = loadImage(myBackground.backgroundImagesName.get(0));//loadImage("water.jpg");
-           buttonImage.resize(70,70);
+           buttonImage.resize(40,40);
            theEvent.controller().setImage(buttonImage);
-           myBackground.currentBackgroundImageIndex = 1;
-           //myBackground.
          } else {
            PImage buttonImage = loadImage(myBackground.backgroundImagesName.get(1));//loadImage("water.jpg");
-           buttonImage.resize(70,70);
+           buttonImage.resize(40,40);
            theEvent.controller().setImage(buttonImage);
-           myBackground.currentBackgroundImageIndex = 0;
          }
        }else if(theEvent.getName() == "selectDateTime"){
          selectDate();
@@ -424,11 +422,11 @@ void setupBackground(){
   cp5 = new ControlP5(this);
   font = createFont("arial",20);
   PImage buttonImage = loadImage(myBackground.backgroundImagesName.get(0));//loadImage("water.jpg");
-  buttonImage.resize(70,70);
+  buttonImage.resize(40,40);
   cp5.addButton("changeBackground")
       .setValue(128)
-      .setPosition(20,height -100)
-      .setSize(70,70)
+      .setPosition(20,height - 50)
+      .setSize(40,40)
       //.setFont(font)
       .setImage(buttonImage);
       //.updateSize();

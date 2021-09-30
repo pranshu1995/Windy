@@ -13,6 +13,7 @@
     ArrayList<String> backgroundImagesName;
     ArrayList<PImage> backgroundImages;
     int currentBackgroundImageIndex;
+    boolean sideView;
     
      ParticleSystem ps, ps1, ps2, ps3, ps4, ps5;
      
@@ -31,31 +32,34 @@
       Background(PVector vel){
       Font = createFont("Helvetica-Bold", 30);
       this.velocity = vel;  
+      sideView = false;
 
       particleSystems = new ArrayList<ParticleSystem>();
       
       PImage img = loadImage("texture.png");
-      ps = new ParticleSystem(0, new PVector(3*width/4, height/2+20), img,firstDesertColor);
-      ps1 = new ParticleSystem(0, new PVector(3*width/4+20, height/2), img,firstDesertColor);
-      ps2 = new ParticleSystem(0, new PVector(3*width/4+70, height/2-20), img,firstDesertColor);
-      ps3 = new ParticleSystem(0, new PVector(3*width/4+30, height/2-10), img,firstDesertColor);
-      ps4 = new ParticleSystem(0, new PVector(3*width/4+30, height/2-10), img,firstDesertColor);
-      ps5 = new ParticleSystem(0, new PVector(3*width/4+30, height/2-10), img,firstDesertColor);
+      ps = new ParticleSystem(0, new PVector(3*width/4+45, height/2-39), img,firstDesertColor);
+      ps1 = new ParticleSystem(0, new PVector(3*width/4+100, height/2-43), img,firstDesertColor);
+      ps2 = new ParticleSystem(0, new PVector(3*width/4-40, height/2-18), img,firstDesertColor);
+      ps3 = new ParticleSystem(0, new PVector(3*width/4-30, height/2-10), img,firstDesertColor);
+      ps4 = new ParticleSystem(0, new PVector(3*width/4, height/2-20), img,firstDesertColor);
+      ps5 = new ParticleSystem(0, new PVector(3*width/4-70, height/2+5), img,firstDesertColor);
       
-      ds1 = new ParticleSystem(0, new PVector(width/2-80,height/2+90), img,secondDesertColor);
-      ds2 = new ParticleSystem(0, new PVector(width/2-50,height/2+40), img,secondDesertColor);
-      ds3 = new ParticleSystem(0, new PVector(width/2-50,height/2+20), img,secondDesertColor);
-      ds4 = new ParticleSystem(0, new PVector(width/2-40,height/2+60), img,secondDesertColor);
+      ds1 = new ParticleSystem(0, new PVector(width/2-110,height/2+15), img,secondDesertColor);
+      ds2 = new ParticleSystem(0, new PVector(width/2-125,height/2+30), img,secondDesertColor);
+      ds3 = new ParticleSystem(0, new PVector(width/2-80,height/2+5), img,secondDesertColor);
+      ds4 = new ParticleSystem(0, new PVector(width/2-130,height/2+40), img,secondDesertColor);
       for(int i = 0; i< numParticleSystems; i++){
         particleSystems.add(new ParticleSystem(0, new PVector(random(0,width), random(0,height)), img,topViewDesertColor));
       }
       currentBackgroundImageIndex=0;
       backgroundImagesName = new ArrayList<String>();
       backgroundImagesName.add("sand-texture_PI4.jpg");
+      backgroundImagesName.add("sideViewImage.png");
       backgroundImagesName.add("water.jpg");
       
       backgroundImages = new ArrayList<PImage>();
       backgroundImages.add(loadImage("sand-texture_PI4.jpg"));
+      backgroundImagesName.add("sideViewImage.png");
       backgroundImages.add(loadImage("water.jpg"));
       backgroundImages.get(0).resize(1600,1600);
       backgroundImages.get(1).resize(1600,1600);
@@ -68,7 +72,7 @@
       smallPlant7 = new SmallPlant(new PVector(2*width/4, 7*height/10),100,10,velocity);
     }
     
-    void draw(PVector vel, boolean sideView){
+    void draw(PVector vel){
       if(!sideView){
         fill(51, 102, 255);
         textFont(Font);
@@ -161,7 +165,7 @@
      noStroke();
      rect(0,height - height/3, width, height/3);
      
-     fill(secondDesertColor);
+     //fill(secondDesertColor);
      noStroke();
      beginShape();
      curveVertex(0,3*height/2);
@@ -171,9 +175,9 @@
      curveVertex(width,height);
      curveVertex(width,3*height/2);
      endShape();
-     fill(255);
+     //fill(255);
      
-     fill(firstDesertColor);
+    fill(firstDesertColor);
      noStroke();
      beginShape();
      curveVertex(0,3*height/2);

@@ -24,7 +24,8 @@ public class SmallPlant{
       rotate(PVector.angleBetween(velocity,PVector.fromAngle(0)));
       //println("\nAfter3:", endPoint, velocity_, PVector.angleBetween(velocity,PVector.fromAngle(0)));
       noFill();
-      stroke(0,255,0);
+      stroke(0, 128, 24);
+      strokeWeight(2);  // Thicker
       curve(endPoint.x-10, 0, 0,0,endPoint.x, endPoint.y,endPoint.x-25, 0);
       popMatrix();
       
