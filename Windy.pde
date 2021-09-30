@@ -166,7 +166,6 @@ void draw() {
   background(169, 231, 241);
   //Background for sand and plants
   myBackground.draw(PVector.fromAngle(radians(windDirectionArray[primaryIndex])));
-
   // --- Start draw method for track color --- //
   video.loadPixels();
   imageMode(CORNER);
@@ -216,7 +215,6 @@ void draw() {
   }
   //println(avgX, avgY);
   // --- End draw method for track color --- //
-
 
   float yoff = 0;
   //loadPixels();
@@ -305,7 +303,6 @@ void mouseArea() {
   ellipse(mouseX, mouseY, 100, 100);
   popStyle();
 }
-
 
 void mousePressed() {
   //microphoneToggle();
