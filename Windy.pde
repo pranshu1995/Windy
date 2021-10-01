@@ -6,10 +6,10 @@ SoundFile sample;
 AudioIn in;
 
 // if camera not working change cameraInput to one of the cameras listed in the console.
-int cameraInput = 2;
+int cameraInput = 0;
 
 boolean microphoneCheck = false;
-boolean cameraCheck = false;
+boolean cameraCheck = true;
 
 float inc = 0.1;
 int scale = 20;
@@ -56,6 +56,7 @@ float friction = -0.9;
 Capture video;
 color trackColor;
 float threshold = 25;
+int r, g, b;
 // --- End global variables for color tracking    --- //
 
 // --- Start global variables for controls  --- //
@@ -142,6 +143,42 @@ void setup() {
     .setColorLabel(0)
     ;
 
+  // color picker label
+  cp5.addLabel("PICK COLOR TO TRACK")
+    .setPosition(width*0.195, height*0.895)
+    .setColor(0)
+    ;
+
+  // red
+  cp5.addNumberbox("r")
+    .setPosition(width*0.2, height*0.92)
+    .setSize(30, 20)
+    .setColorLabel(0)
+    .setValue(255)
+    .setRange(0, 255)
+    .setScrollSensitivity(2)
+    ;
+
+  // g
+  cp5.addNumberbox("g")
+    .setPosition(width*0.24, height*0.92)
+    .setSize(30, 20)
+    .setColorLabel(0)
+    .setValue(0)
+    .setRange(0, 255)
+    .setScrollSensitivity(2)
+    ;
+
+  // b
+  cp5.addNumberbox("b")
+    .setPosition(width*0.28, height*0.92)
+    .setSize(30, 20)
+    .setColorLabel(0)
+    .setValue(0)
+    .setRange(0, 255)
+    .setScrollSensitivity(2)
+    ;
+
   // --- End setup for controls --- //
 }
 
@@ -152,8 +189,17 @@ void draw() {
 
   // --- Start draw method for track color --- //
   video.loadPixels();
-  imageMode(CORNER);
-  //image(video, 0, height/4, width/4, height/4); // show video capture
+  //imageMode(CORNER);
+  
+  // set trackColor to slider values
+  trackColor = color(r, g, b);
+
+  // draw ellipse to show selected color
+  pushStyle();
+  noStroke();
+  fill(trackColor);
+  ellipse(width*0.34, height*0.901, 16, 16);
+  popStyle();
 
   threshold = 90;
   float avgX = 0;
@@ -293,12 +339,12 @@ void mousePressed() {
 }
 
 void cameraToggle() {
-  if (cameraCheck == true) {
+  if (cameraCheck == false) {
     // disable camera
-    video.stop();
+    video.start();
   } else {
     // enable camera
-    video.start();
+    video.stop();
   }
   cameraCheck = !cameraCheck;
   //println("camera is", cameraCheck);
@@ -315,7 +361,7 @@ void microphoneToggle() {
     sample.pause();
   }
   microphoneCheck = !microphoneCheck;
-  //println("newVal ", microphoneCheck);
+  println("newVal ", microphoneCheck);
 }
 
 // --- Start color tracking helper functions   --- //
