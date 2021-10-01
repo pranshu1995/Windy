@@ -66,6 +66,9 @@ int r, g, b;
 ControlP5 cp5;
 // --- End global variables for controls  --- //
 
+String dataSource0 = ("Data source:");
+String dataSource1 = ("Wind Speed and Wind Direction ");
+String dataSource2 = ("measured at UTS Building 11.");
 
 void setup() {
   size(800, 600);
@@ -74,7 +77,7 @@ void setup() {
   //background(255);
   rows = floor(height/scale) + 1;
   cols = floor(width/scale) + 1;
-
+  
   flowfield = new PVector[cols*rows];
 
   for ( int i=0; i<particleCount; i++) {
@@ -212,6 +215,13 @@ void draw() {
   // --- Start draw method for track color --- //
   video.loadPixels();
   //imageMode(CORNER);
+  pushStyle();
+  fill(0);
+  textAlign(CENTER);
+  text(dataSource0,width/2,height*0.94);
+  text(dataSource1,width/2,height*0.96);
+  text(dataSource2,width/2,height*0.98);
+  popStyle();
 
   // set trackColor to slider values
   trackColor = color(r, g, b);
@@ -387,14 +397,12 @@ void microphoneToggle() {
 }
 
 void audioToggle() {
-  if (audioCheck == true) {
-    in.stop();
-    sample.pause();
+  if (microphoneCheck == true) {
+      in.stop();
   } else {
-    in = new AudioIn(this, 0);
-    sample.play();
+    sample.pause();
   }
-  microphoneCheck = !microphoneCheck;
+  //audioCheck = !audioCheck;
   //println("mic check", microphoneCheck);
 }
 
