@@ -11,6 +11,9 @@ int cameraInput = 0;
 boolean microphoneCheck = false;
 boolean cameraCheck = true;
 
+
+
+
 float inc = 0.1;
 int scale = 20;
 int rows;
@@ -45,6 +48,8 @@ String toDate = "2021-09-21";  // Format: YYYY-MM-DD
 
 String startHour = "13";  // Value: 00-23
 String endHour = "13";  // Value: 00-23
+PFont font;
+boolean dateVisible = true;
 
 // Variables for collision
 float spring = 1;
@@ -67,9 +72,9 @@ ControlP5 cp5;
 void setup() {
   size(800, 600);
 
-  //Background(sand dune)
-  myBackground =  new Background( new PVector(0.0, 0.0));
-
+  
+  setupBackground();
+  
   //background(255);
   rows = floor(height/scale) + 1;
   cols = floor(width/scale) + 1;
@@ -79,11 +84,23 @@ void setup() {
   for ( int i=0; i<particleCount; i++) {
     particles[i] = new Particle(i, particles);
   }
+  fetchData();
+  PImage calendarImage = loadImage("calendar.png");
+  calendarImage.resize(30,30);
+  cp5.addButton("selectDateTime")
+       .setValue(50)
+       .setPosition(width -50,5)
+       .setSize(30,30)
+       .setImage(calendarImage);
+}
 
+
+void fetchData(){
   // Load Wind Speed data from EIF portal in CSV format
+  //println("Fetching");
   windDirecrion = loadTable("https://eif-research.feit.uts.edu.au/api/csv/?rFromDate=" + fromDate + "T" + startHour + "%3A00%3A00&rToDate=" + toDate + "T" + endHour + "%3A00%3A00&rFamily=weather&rSensor=IWD", "csv");
   windSpeed = loadTable("https://eif-research.feit.uts.edu.au/api/csv/?rFromDate=" + fromDate + "T" + startHour + "%3A00%3A00&rToDate=" + toDate + "T" + endHour + "%3A00%3A00&rFamily=weather&rSensor=IWS", "csv");
-
+  //println("Fetched");
   // Extract data from CSV
   windDirectionArray = new float[windDirecrion.getRowCount()];
   windSpeedArray = new float[windSpeed.getRowCount()];
@@ -186,7 +203,6 @@ void draw() {
   background(169, 231, 241);
   //Background for sand and plants
   myBackground.draw(PVector.fromAngle(radians(windDirectionArray[primaryIndex])));
-
   // --- Start draw method for track color --- //
   video.loadPixels();
   //imageMode(CORNER);
@@ -376,3 +392,198 @@ float distSq(float x1, float y1, float z1, float x2, float y2, float z2) {
   return d;
 }
 // --- End color tracking helper functions   --- //
+
+//Date Time Picker//
+void controlEvent(ControlEvent theEvent) {
+     println("Clicked");
+     
+     if(theEvent.isAssignableFrom(Textfield.class)){
+       if(theEvent.getName() == "StartTime"){
+         startHour = theEvent.getStringValue();
+         cp5.get(Textfield.class,"StartTime").setValue(startHour);
+         //cp5.get(Textfield.class,"StartTime").submit();
+         fetchData();
+         println(" start time changed", startHour,cp5.get(Textfield.class,"StartTime").getText());
+       }
+       if(theEvent.getName() == "StartYear"){
+         (fromDate.split("-",3)[0]) = theEvent.getStringValue();
+         fetchData();
+         println("start year changed");
+       }
+       if(theEvent.getName() == "StartMonth"){
+         (fromDate.split("-",3)[1]) = theEvent.getStringValue();
+         fetchData();
+         println("start month changed");
+       }
+       if(theEvent.getName() == "StartDay"){
+         (fromDate.split("-",3)[2]) = theEvent.getStringValue();
+         fetchData();
+         println("start day changed");
+       }// begin date
+       
+        if(theEvent.getName() == "EndTime"){
+         endHour = theEvent.getStringValue();
+         fetchData();
+         println("end time changed");
+       }
+       if(theEvent.getName() == "EndYear"){
+         (toDate.split("-",3)[0]) = theEvent.getStringValue();
+         fetchData();
+         println("end year changed");
+       }
+       if(theEvent.getName() == "EndMonth"){
+         (toDate.split("-",3)[1]) = theEvent.getStringValue();
+         fetchData();
+         println("end month changed");
+       }
+       if(theEvent.getName() == "EndDay"){
+         (toDate.split("-",3)[2]) = theEvent.getStringValue();
+         fetchData();
+         println("end day changed");
+       }
+     }else if(theEvent.isAssignableFrom(Button.class)){
+       if(theEvent.getName() == "changeBackground"){
+         myBackground.sideView = !myBackground.sideView;
+         if(myBackground.sideView) {
+           PImage buttonImage = loadImage(myBackground.backgroundImagesName.get(0));//loadImage("water.jpg");
+           buttonImage.resize(40,40);
+           theEvent.controller().setImage(buttonImage);
+         } else {
+           PImage buttonImage = loadImage(myBackground.backgroundImagesName.get(1));//loadImage("water.jpg");
+           buttonImage.resize(40,40);
+           theEvent.controller().setImage(buttonImage);
+         }
+       }else if(theEvent.getName() == "selectDateTime"){
+         selectDate();
+       }
+     }
+}
+
+//Setting Button Image background 
+void setupBackground(){
+  myBackground =  new Background( new PVector(0.0,0.0));
+  cp5 = new ControlP5(this);
+  font = createFont("arial",20);
+  PImage buttonImage = loadImage(myBackground.backgroundImagesName.get(0));//loadImage("water.jpg");
+  buttonImage.resize(40,40);
+  cp5.addButton("changeBackground")
+      .setValue(128)
+      .setPosition(20,height - 50)
+      .setSize(40,40)
+      //.setFont(font)
+      .setImage(buttonImage);
+      //.updateSize();
+  //Background(sand dune) 
+}
+
+void selectDate(){
+   dateVisible = !dateVisible;
+  fill(255);
+  font = createFont("Poppins",12);
+  
+ // cp5 = new ControlP5(this);
+  cp5.addTextfield("StartTime")
+        .setFont(font)
+        .setPosition(width -50,40)
+        .setSize(30,30)
+        .setColor(color(255))
+        .setText(startHour)
+        .setAutoClear(false)
+        .setLabel("")
+        .setVisible(dateVisible)
+        .setLabelVisible(false);
+        
+  cp5.addTextfield("StartYear")
+        .setFont(font)
+        .setPosition(width -100,40)
+        .setSize(40,30)
+        .setText(fromDate.split("-",3)[0])
+        .setColor(color(255))
+        .setAutoClear(false)
+        .setVisible(dateVisible)
+        .setLabel("")
+        .setLabelVisible(false);
+        
+  cp5.addTextfield("StartMonth")
+        .setFont(font)
+        .setPosition(width -150,40)
+        .setSize(40,30)
+        .setText(fromDate.split("-",3)[1])
+        .setLabel("")
+        .setLabelVisible(false)
+        .setAutoClear(false)
+        .setVisible(dateVisible)
+        .setColor(color(255));
+        
+  cp5.addTextfield("StartDay")
+        .setFont(font)
+        .setPosition(width -200,40)
+        .setSize(30,30)
+        .setText(fromDate.split("-",3)[2])
+        .setLabel("")
+        .setLabelVisible(false)
+        .setAutoClear(false)
+        .setVisible(dateVisible)
+        .setColor(color(255));
+        
+  cp5.addTextlabel("Begin")
+        .setText("Start")
+        .setFont(font)
+        .setPosition(width - 250,45)
+        .setSize(50,30)
+        .setVisible(dateVisible)
+        .setColor(color(255));
+  
+  cp5.addTextfield("EndTime")
+        .setFont(font)
+        .setPosition(width -50,100)
+        .setSize(30,30)
+        .setColor(color(255))
+        .setText(endHour)
+        .setAutoClear(false)
+        .setVisible(dateVisible)
+        .setLabel("Time")
+        .setLabelVisible(true);
+        
+  cp5.addTextfield("EndYear")
+        .setFont(font)
+        .setPosition(width -100,100)
+        .setSize(40,30)
+        .setText(toDate.split("-",3)[0])
+        .setColor(color(255))
+        .setAutoClear(false)
+        .setVisible(dateVisible)
+        .setLabel("Year")
+        .setLabelVisible(true);
+        
+  cp5.addTextfield("EndMonth")
+        .setFont(font)
+        .setPosition(width -150,100)
+        .setSize(40,30)
+        .setText(toDate.split("-",3)[1])
+        .setLabel("Month")
+        .setAutoClear(false)
+        .setVisible(dateVisible)
+        .setLabelVisible(true)
+        .setColor(color(255));
+        
+  cp5.addTextfield("EndDay")
+        .setFont(font)
+        .setPosition(width -200,100)
+        .setSize(30,30)
+        .setText(toDate.split("-",3)[2])
+        .setLabel("Day")
+        .setLabelVisible(true)
+        .setVisible(dateVisible)
+        .setAutoClear(false)
+        .setColor(color(255));
+        
+  cp5.addTextlabel("End")
+        .setText("End")
+        .setFont(font)
+        .setPosition(width - 250,95)
+        .setSize(50,30)
+        .setVisible(dateVisible)
+        .setColor(color(255));
+        
+}
