@@ -1,10 +1,15 @@
+import controlP5.*;
 import processing.video.*;
 import processing.sound.*;
 Amplitude amp;
 SoundFile sample;
 AudioIn in;
 
-Boolean microphoneCheck = false;
+// if camera not working change cameraInput to one of the cameras listed in the console.
+int cameraInput = 2;
+
+boolean microphoneCheck = false;
+boolean cameraCheck = false;
 
 float inc = 0.1;
 int scale = 20;
@@ -53,9 +58,13 @@ color trackColor;
 float threshold = 25;
 // --- End global variables for color tracking    --- //
 
+// --- Start global variables for controls  --- //
+ControlP5 cp5;
+// --- End global variables for controls  --- //
+
+
 void setup() {
   size(800, 600);
-  //fullScreen(P2D);
 
   //Background(sand dune)
   myBackground =  new Background( new PVector(0.0, 0.0));
@@ -96,22 +105,55 @@ void setup() {
 
   // --- Start setup for color tracking  --- //
   String[] cameras = Capture.list();
+  println("Choose a camera from the list below:");
   printArray(cameras);
-  video = new Capture(this, width, height, cameras[2]);
-  video.start();
+  try {
+    video = new Capture(this, width, height, cameras[cameraInput]);
+    //video.start();
+  }
+  catch (ArrayIndexOutOfBoundsException e) {
+    e.printStackTrace();
+    println("Choose a different camera from the list below:");
+    printArray(cameras);
+  }
   trackColor = color(255, 0, 0);    // red
   // --- End setup for color tracking   --- //
+
+  // --- Start setup for controls --- //
+  cp5 = new ControlP5(this);
+
+  // camera control
+  cp5.addToggle("cameraToggle")
+    .setPosition(600, 550)
+    .setSize(50, 20)
+    .setValue(false)
+    .setMode(ControlP5.SWITCH)
+    .setLabel("Toggle camera")
+    .setColorLabel(0)
+    ;
+
+  // microphone control
+  cp5.addToggle("microphoneToggle")
+    .setPosition(680, 550)
+    .setSize(50, 20)
+    .setValue(false)
+    .setMode(ControlP5.SWITCH)
+    .setLabel("Toggle microphone")
+    .setColorLabel(0)
+    ;
+
+  // --- End setup for controls --- //
 }
 
 void draw() {
   background(169, 231, 241);
   //Background for sand and plants
   myBackground.draw(PVector.fromAngle(radians(windDirectionArray[primaryIndex])));
-  
+
   // --- Start draw method for track color --- //
   video.loadPixels();
   imageMode(CORNER);
-  image(video, 0, 0, width/4, height/4); // show video capture
+  //image(video, 0, height/4, width/4, height/4); // show video capture
 
   threshold = 90;
   float avgX = 0;
@@ -221,8 +263,6 @@ void draw() {
     }
   }
 
-
-
   //updatePixels();
   //noLoop();
   //println(frameRate);
@@ -235,8 +275,6 @@ void draw() {
     }
   }
   secondaryindex = secondaryindex + 1;
-
-  
 }
 
 void mouseArea() {
@@ -251,7 +289,19 @@ void mouseArea() {
 }
 
 void mousePressed() {
-  microphoneToggle();
+  //microphoneToggle();
+}
+
+void cameraToggle() {
+  if (cameraCheck == true) {
+    // disable camera
+    video.stop();
+  } else {
+    // enable camera
+    video.start();
+  }
+  cameraCheck = !cameraCheck;
+  //println("camera is", cameraCheck);
 }
 
 void microphoneToggle() {
@@ -265,14 +315,16 @@ void microphoneToggle() {
     sample.pause();
   }
   microphoneCheck = !microphoneCheck;
-  println("newVal ", microphoneCheck);
+  //println("newVal ", microphoneCheck);
 }
 
 // --- Start color tracking helper functions   --- //
+// whenever there is a new video frame, read video
 void captureEvent(Capture video) {
   video.read();
 }
 
+// calculate distance between colors
 float distSq(float x1, float y1, float z1, float x2, float y2, float z2) {
   float d = (x2-x1)*(x2-x1) + (y2-y1)*(y2-y1) +(z2-z1)*(z2-z1);
   return d;
