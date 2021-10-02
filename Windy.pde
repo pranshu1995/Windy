@@ -6,7 +6,7 @@ SoundFile sample;
 AudioIn in;
 
 // if camera not working change cameraInput to one of the cameras listed in the console.
-int cameraInput = 2;
+int cameraInput = 0;
 
 boolean microphoneCheck = false;
 boolean cameraCheck = false;
@@ -95,6 +95,13 @@ void setup() {
     .setPosition(width -50, 5)
     .setSize(30, 30)
     .setImage(calendarImage);
+    
+  // adding a Wind Speed visualization as a ControlP5 slider
+  cp5.addSlider("WindSpeedSlider")
+       .setSize(100,15)
+       .setRange(0,10)
+       .setPosition(width/2 -50, 50)
+       .setColorValueLabel(0);
 }
 
 void fetchData() {
@@ -140,6 +147,9 @@ void draw() {
   float avgX = 0;
   float avgY = 0;
   int count = 0;
+  
+  float angle= 0;
+  
 
   // loop through all pixels within video capture
   for (int x = 0; x < video.width; x++ ) {
@@ -189,7 +199,7 @@ void draw() {
       int index = x + y * cols;
 
       // determine angle for flow field from data
-      float angle = windDirectionArray[primaryIndex];
+      angle = windDirectionArray[primaryIndex];
 
       // introduce minor deviations in the angle using noise
       float magnitude = 50.0;
@@ -256,7 +266,12 @@ void draw() {
     }
   }
   secondaryindex = secondaryindex + 1;
+
+
+  drawCompass(angle, instVel);
 }
+///////////////// end of draw function ////////
+
 
 void mouseArea() {
   pushStyle();
