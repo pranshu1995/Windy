@@ -263,6 +263,8 @@ void draw() {
 
 
   drawCompass(angle, instVel);
+  showDate(timeStamps[primaryIndex]);
+
 }
 ///////////////// end of draw function ////////
 

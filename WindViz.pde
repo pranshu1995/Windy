@@ -15,6 +15,8 @@ void setting_up(){
   // Code to draw compass- to be put at the end of draw() function
   // as drawCompass(angle, instVel);
   drawCompass(10, 10);
+  showDate(timeStamps[primaryIndex]);
+
 }
 
 int drawCompass(float angle, float mag){
@@ -42,4 +44,10 @@ int drawCompass(float angle, float mag){
     
   return 0;
 
+}
+
+void showDate(String timeStamp){
+  fill(0);
+  text(timeStamp, width - 120, 27);
+  
 }
