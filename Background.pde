@@ -37,14 +37,14 @@
       particleSystems = new ArrayList<ParticleSystem>();
       
       PImage img = loadImage("texture.png");
-      ps = new ParticleSystem(0, new PVector(3*width/4+45, height/2-39), img,firstDesertColor);
+      ps = new ParticleSystem(0, new PVector(3*width/4+75, height/2-38), img,firstDesertColor);
       ps1 = new ParticleSystem(0, new PVector(3*width/4+100, height/2-43), img,firstDesertColor);
       ps2 = new ParticleSystem(0, new PVector(3*width/4-40, height/2-18), img,firstDesertColor);
-      ps3 = new ParticleSystem(0, new PVector(3*width/4-30, height/2-10), img,firstDesertColor);
-      ps4 = new ParticleSystem(0, new PVector(3*width/4, height/2-20), img,firstDesertColor);
+      ps3 = new ParticleSystem(0, new PVector(3*width/4-25, height/2-10), img,firstDesertColor);
+      ps4 = new ParticleSystem(0, new PVector(3*width/4+40, height/2-40), img,firstDesertColor);
       ps5 = new ParticleSystem(0, new PVector(3*width/4-70, height/2+5), img,firstDesertColor);
       
-      ds1 = new ParticleSystem(0, new PVector(width/2-110,height/2+15), img,secondDesertColor);
+      ds1 = new ParticleSystem(0, new PVector(width/2-100,height/2+15), img,secondDesertColor);
       ds2 = new ParticleSystem(0, new PVector(width/2-125,height/2+30), img,secondDesertColor);
       ds3 = new ParticleSystem(0, new PVector(width/2-80,height/2+5), img,secondDesertColor);
       ds4 = new ParticleSystem(0, new PVector(width/2-130,height/2+40), img,secondDesertColor);
@@ -75,7 +75,7 @@
     void draw(PVector vel){
       if(!sideView){
         fill(51, 102, 255);
-        textFont(Font);
+        //textFont(Font);
         float angle = PVector.angleBetween(vel,PVector.fromAngle(0));
         push();
         translate(width/2, height/2);
@@ -164,8 +164,9 @@
      fill(thirdDesertColor);
      noStroke();
      rect(0,height - height/3, width, height/3);
+     fill(255);
      
-     //fill(secondDesertColor);
+     fill(secondDesertColor);
      noStroke();
      beginShape();
      curveVertex(0,3*height/2);
@@ -175,9 +176,9 @@
      curveVertex(width,height);
      curveVertex(width,3*height/2);
      endShape();
-     //fill(255);
+     fill(255);
      
-    fill(firstDesertColor);
+     fill(firstDesertColor);
      noStroke();
      beginShape();
      curveVertex(0,3*height/2);
@@ -187,5 +188,6 @@
      curveVertex(width,height);
      curveVertex(width,3*height/2);
      endShape();  
+     fill(255);
  }
 }

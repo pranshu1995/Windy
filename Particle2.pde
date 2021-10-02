@@ -1,5 +1,6 @@
 
 // A simple Particle class, renders the particle as an image
+//Reference: https://processing.org/examples/smokeparticlesystem.html
 
 class Particle2 {
   PVector loc;

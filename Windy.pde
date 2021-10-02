@@ -72,8 +72,12 @@ String dataSource2 = ("measured at UTS Building 11.");
 
 void setup() {
   size(800, 600);
-  setupBackground();
+  cp5 = new ControlP5(this);
 
+  
+  setupBackground();
+  createUI();
+  
   //background(255);
   rows = floor(height/scale) + 1;
   cols = floor(width/scale) + 1;
@@ -110,101 +114,6 @@ void fetchData() {
     windSpeedArray[i] = windSpeed.getFloat(i, 1);
   }
 
-  amp = new Amplitude(this);
-  in = new AudioIn(this, 0);
-  ////in.start();
-  //amp.input(in);
-
-  // Load and play a soundfile and loop it.
-  sample = new SoundFile(this, "desert_wind.mp3");
-  sample.loop();
-
-  // --- Start setup for color tracking  --- //
-  String[] cameras = Capture.list();
-  println("Choose a camera from the list below:");
-  printArray(cameras);
-  try {
-    video = new Capture(this, width, height, cameras[cameraInput]);
-    //video.start();
-  }
-  catch (ArrayIndexOutOfBoundsException e) {
-    e.printStackTrace();
-    println("Choose a different camera from the list below:");
-    printArray(cameras);
-  }
-  trackColor = color(255, 0, 0);    // red
-  // --- End setup for color tracking   --- //
-
-  // --- Start setup for controls --- //
-  cp5 = new ControlP5(this);
-
-  // camera control
-  cp5.addToggle("cameraToggle")
-    .setPosition(width*0.7, height*0.92)
-    .setSize(50, 20)
-    .setValue(false)
-    .setMode(ControlP5.SWITCH)
-    .setLabel("Toggle camera")
-    .setColorLabel(0)
-    ;
-
-  // audio control
-  cp5.addToggle("audioToggle")
-    .setPosition(width*0.9, height*0.92)
-    .setSize(50, 20)
-    .setValue(false)
-    .setMode(ControlP5.SWITCH)
-    .setLabel("Toggle audio")
-    .setColorLabel(0)
-    ;
-
-  // microphone control
-  cp5.addToggle("microphoneToggle")
-    .setPosition(width*0.8, height*0.92)
-    .setSize(50, 20)
-    .setValue(false)
-    .setMode(ControlP5.SWITCH)
-    .setLabel("Toggle microphone")
-    .setColorLabel(0)
-    ;
-
-  // color picker label
-  cp5.addLabel("PICK COLOR TO TRACK")
-    .setPosition(width*0.195, height*0.895)
-    .setColor(0)
-    ;
-
-  // red
-  cp5.addNumberbox("r")
-    .setPosition(width*0.2, height*0.92)
-    .setSize(30, 20)
-    .setColorLabel(0)
-    .setValue(255)
-    .setRange(0, 255)
-    .setScrollSensitivity(2)
-    ;
-
-  // g
-  cp5.addNumberbox("g")
-    .setPosition(width*0.24, height*0.92)
-    .setSize(30, 20)
-    .setColorLabel(0)
-    .setValue(0)
-    .setRange(0, 255)
-    .setScrollSensitivity(2)
-    ;
-
-  // b
-  cp5.addNumberbox("b")
-    .setPosition(width*0.28, height*0.92)
-    .setSize(30, 20)
-    .setColorLabel(0)
-    .setValue(0)
-    .setRange(0, 255)
-    .setScrollSensitivity(2)
-    ;
-
-  // --- End setup for controls --- //
 }
 
 void draw() {
@@ -416,69 +325,59 @@ float distSq(float x1, float y1, float z1, float x2, float y2, float z2) {
 // --- End color tracking helper functions   --- //
 
 //Date Time Picker//
-void controlEvent(ControlEvent theEvent) {
-  //println("Clicked");
-
-  if (theEvent.isAssignableFrom(Textfield.class)) {
-    if (theEvent.getName() == "StartTime") {
-      startHour = theEvent.getStringValue();
-      cp5.get(Textfield.class, "StartTime").setValue(startHour);
-      //cp5.get(Textfield.class,"StartTime").submit();
-      fetchData();
-      println(" start time changed", startHour, cp5.get(Textfield.class, "StartTime").getText());
-    }
-    if (theEvent.getName() == "StartYear") {
-      (fromDate.split("-", 3)[0]) = theEvent.getStringValue();
-      fetchData();
-      println("start year changed");
-    }
-    if (theEvent.getName() == "StartMonth") {
-      (fromDate.split("-", 3)[1]) = theEvent.getStringValue();
-      fetchData();
-      println("start month changed");
-    }
-    if (theEvent.getName() == "StartDay") {
-      (fromDate.split("-", 3)[2]) = theEvent.getStringValue();
-      fetchData();
-      println("start day changed");
-    }// begin date
-
-    if (theEvent.getName() == "EndTime") {
-      endHour = theEvent.getStringValue();
-      fetchData();
-      println("end time changed");
-    }
-    if (theEvent.getName() == "EndYear") {
-      (toDate.split("-", 3)[0]) = theEvent.getStringValue();
-      fetchData();
-      println("end year changed");
-    }
-    if (theEvent.getName() == "EndMonth") {
-      (toDate.split("-", 3)[1]) = theEvent.getStringValue();
-      fetchData();
-      println("end month changed");
-    }
-    if (theEvent.getName() == "EndDay") {
-      (toDate.split("-", 3)[2]) = theEvent.getStringValue();
-      fetchData();
-      println("end day changed");
-    }
-  } else if (theEvent.isAssignableFrom(Button.class)) {
-    if (theEvent.getName() == "changeBackground") {
-      myBackground.sideView = !myBackground.sideView;
-      if (myBackground.sideView) {
-        PImage buttonImage = loadImage(myBackground.backgroundImagesName.get(0));//loadImage("water.jpg");
-        buttonImage.resize(40, 40);
-        theEvent.controller().setImage(buttonImage);
-      } else {
-        PImage buttonImage = loadImage(myBackground.backgroundImagesName.get(1));//loadImage("water.jpg");
-        buttonImage.resize(40, 40);
-        theEvent.controller().setImage(buttonImage);
-      }
-    } else if (theEvent.getName() == "selectDateTime") {
-      selectDate();
-    }
-  }
+void controlEvent(ControlEvent theEvent) {     
+     if(theEvent.isAssignableFrom(Textfield.class)){
+       if(theEvent.getName() == "StartTime"){
+         startHour = theEvent.getStringValue();
+         cp5.get(Textfield.class,"StartTime").setValue(startHour);
+         //cp5.get(Textfield.class,"StartTime").submit();
+         fetchData();
+       }
+       if(theEvent.getName() == "StartYear"){
+         (fromDate.split("-",3)[0]) = theEvent.getStringValue();
+         fetchData();
+       }
+       if(theEvent.getName() == "StartMonth"){
+         (fromDate.split("-",3)[1]) = theEvent.getStringValue();
+         fetchData();
+       }
+       if(theEvent.getName() == "StartDay"){
+         (fromDate.split("-",3)[2]) = theEvent.getStringValue();
+         fetchData();
+       }// begin date
+       
+        if(theEvent.getName() == "EndTime"){
+         endHour = theEvent.getStringValue();
+         fetchData();
+       }
+       if(theEvent.getName() == "EndYear"){
+         (toDate.split("-",3)[0]) = theEvent.getStringValue();
+         fetchData();
+       }
+       if(theEvent.getName() == "EndMonth"){
+         (toDate.split("-",3)[1]) = theEvent.getStringValue();
+         fetchData();
+       }
+       if(theEvent.getName() == "EndDay"){
+         (toDate.split("-",3)[2]) = theEvent.getStringValue();
+         fetchData();
+       }
+     }else if(theEvent.isAssignableFrom(Button.class)){
+       if(theEvent.getName() == "changeBackground"){
+         myBackground.sideView = !myBackground.sideView;
+         if(myBackground.sideView) {
+           PImage buttonImage = loadImage(myBackground.backgroundImagesName.get(0));//loadImage("water.jpg");
+           buttonImage.resize(40,40);
+           theEvent.controller().setImage(buttonImage);
+         } else {
+           PImage buttonImage = loadImage(myBackground.backgroundImagesName.get(1));//loadImage("water.jpg");
+           buttonImage.resize(40,40);
+           theEvent.controller().setImage(buttonImage);
+         }
+       }else if(theEvent.getName() == "selectDateTime"){
+         toggleDateFields();
+       }
+     }
 }
 
 //Setting Button Image background
@@ -489,21 +388,127 @@ void setupBackground() {
   PImage buttonImage = loadImage(myBackground.backgroundImagesName.get(0));//loadImage("water.jpg");
   buttonImage.resize(40, 40);
   cp5.addButton("changeBackground")
-    .setValue(128)
-    .setPosition(20, height - 50)
-    .setSize(40, 40)
-    //.setFont(font)
-    .setImage(buttonImage);
-  //.updateSize();
-  //Background(sand dune)
+      .setValue(128)
+      .setPosition(20,height - 50)
+      .setSize(40,40)
+      .setImage(buttonImage);
+}
+void toggleDateFields(){
+  dateVisible = !dateVisible;
+  cp5.getController("StartTime").setVisible(dateVisible);
+  cp5.getController("StartYear").setVisible(dateVisible);
+  cp5.getController("StartMonth").setVisible(dateVisible);
+  cp5.getController("StartDay").setVisible(dateVisible);
+  cp5.getController("Begin").setVisible(dateVisible);
+  cp5.getController("EndTime").setVisible(dateVisible);
+  cp5.getController("EndYear").setVisible(dateVisible);
+  cp5.getController("EndMonth").setVisible(dateVisible);
+  cp5.getController("EndDay").setVisible(dateVisible);
+  cp5.getController("End").setVisible(dateVisible);
 }
 
-void selectDate() {
-  dateVisible = !dateVisible;
+//Create UI //
+void createUI(){
   fill(255);
-  font = createFont("Poppins", 12);
+  font = createFont("arial",12);
 
-  // cp5 = new ControlP5(this);
+  amp = new Amplitude(this);
+  in = new AudioIn(this, 0);
+  ////in.start();
+  //amp.input(in);
+
+  // Load and play a soundfile and loop it.
+  sample = new SoundFile(this, "desert_wind.mp3");
+  sample.loop();
+
+  // --- Start setup for color tracking  --- //
+  String[] cameras = Capture.list();
+  println("Choose a camera from the list below:");
+  printArray(cameras);
+  try {
+    video = new Capture(this, width, height, cameras[cameraInput]);
+    //video.start();
+  }
+  catch (ArrayIndexOutOfBoundsException e) {
+    e.printStackTrace();
+    println("Choose a different camera from the list below:");
+    printArray(cameras);
+  }
+  trackColor = color(255, 0, 0);    // red
+  // --- End setup for color tracking   --- //
+
+  // --- Start setup for controls --- //
+  cp5 = new ControlP5(this);
+
+  // camera control
+  cp5.addToggle("cameraToggle")
+    .setPosition(width*0.7, height*0.92)
+    .setSize(50, 20)
+    .setValue(false)
+    .setMode(ControlP5.SWITCH)
+    .setLabel("Toggle camera")
+    .setColorLabel(0)
+    ;
+
+  // audio control
+  cp5.addToggle("audioToggle")
+    .setPosition(width*0.9, height*0.92)
+    .setSize(50, 20)
+    .setValue(false)
+    .setMode(ControlP5.SWITCH)
+    .setLabel("Toggle audio")
+    .setColorLabel(0)
+    ;
+
+  // microphone control
+  cp5.addToggle("microphoneToggle")
+    .setPosition(width*0.8, height*0.92)
+    .setSize(50, 20)
+    .setValue(false)
+    .setMode(ControlP5.SWITCH)
+    .setLabel("Toggle microphone")
+    .setColorLabel(0)
+    ;
+
+  // color picker label
+  cp5.addLabel("PICK COLOR TO TRACK")
+    .setPosition(width*0.195, height*0.895)
+    .setColor(0)
+    ;
+
+  // red
+  cp5.addNumberbox("r")
+    .setPosition(width*0.2, height*0.92)
+    .setSize(30, 20)
+    .setColorLabel(0)
+    .setValue(255)
+    .setRange(0, 255)
+    .setScrollSensitivity(2)
+    ;
+
+  // g
+  cp5.addNumberbox("g")
+    .setPosition(width*0.24, height*0.92)
+    .setSize(30, 20)
+    .setColorLabel(0)
+    .setValue(0)
+    .setRange(0, 255)
+    .setScrollSensitivity(2)
+    ;
+
+  // b
+  cp5.addNumberbox("b")
+    .setPosition(width*0.28, height*0.92)
+    .setSize(30, 20)
+    .setColorLabel(0)
+    .setValue(0)
+    .setRange(0, 255)
+    .setScrollSensitivity(2)
+    ;
+
+  // --- End setup for controls --- //
+  
+  //Start Date Time Picker//
   cp5.addTextfield("StartTime")
     .setFont(font)
     .setPosition(width -50, 40)
@@ -603,10 +608,10 @@ void selectDate() {
   cp5.addTextlabel("End")
     .setText("End")
     .setFont(font)
-    .setPosition(width - 250, 95)
-    .setSize(50, 30)
+    .setPosition(width - 250,110)
+    .setSize(50,30)
     .setVisible(dateVisible)
-    .setColor(color(255));
+    .setColor(color(255));      
 }
 
 void showSourceData() {

@@ -1,5 +1,6 @@
 // A class to describe a group of Particles
 // An ArrayList is used to manage the list of Particles 
+//Reference: https://processing.org/examples/smokeparticlesystem.html
 
 class ParticleSystem {
 

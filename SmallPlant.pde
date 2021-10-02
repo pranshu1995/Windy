@@ -18,11 +18,9 @@ public class SmallPlant{
       float stemAngle = map(i,0,stemCount-1,PI/4,3*PI/4);
       PVector endPoint = PVector.fromAngle(stemAngle);
       endPoint.setMag(plantHeight);
-      //println("Before:",endPoint);
       pushMatrix();
       translate(loc.x, loc.y);
-      rotate(PVector.angleBetween(velocity,PVector.fromAngle(0)));
-      //println("\nAfter3:", endPoint, velocity_, PVector.angleBetween(velocity,PVector.fromAngle(0)));
+      rotate(velocity.heading()-PI/2);
       noFill();
       stroke(0, 128, 24);
       strokeWeight(2);  // Thicker
