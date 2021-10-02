@@ -20,7 +20,15 @@ public class SmallPlant{
       endPoint.setMag(plantHeight);
       pushMatrix();
       translate(loc.x, loc.y);
-      rotate(velocity.heading()-PI/2);
+      float angle = velocity.heading();
+      if(angle>=0 && angle <= PI/2){
+        angle = 0;
+      }else if (angle > PI/2 && angle <= PI){ 
+        angle = PI;
+      }
+      angle = angle - PI/2;
+      
+      rotate(angle);
       noFill();
       stroke(0, 128, 24);
       strokeWeight(2);  // Thicker
