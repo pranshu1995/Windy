@@ -10,7 +10,7 @@ int cameraInput = 2;
 
 boolean microphoneCheck = false;
 boolean cameraCheck = false;
-boolean audioCheck = false;
+boolean audioCheck = true;
 
 float inc = 0.1;
 int scale = 20;
@@ -128,7 +128,6 @@ void draw() {
   myBackground.draw(PVector.fromAngle(radians(windDirectionArray[primaryIndex])));
   // --- Start draw method for track color --- //
   video.loadPixels();
-  //imageMode(CORNER);
 
   showSourceData();
 
@@ -168,9 +167,6 @@ void draw() {
       float d = distSq(r1, g1, b1, r2, g2, b2);
 
       if (d < threshold*threshold) {
-        //stroke(255);
-        //strokeWeight(1);
-        //point(x, y);
         avgX += x;
         avgY += y;
         count ++;
@@ -187,7 +183,6 @@ void draw() {
     ellipse(avgX, avgY, 10, 10);
     popStyle();
   }
-  //println(avgX, avgY);
   // --- End draw method for track color --- //
 
   float yoff = 0;
@@ -461,7 +456,7 @@ void createUI() {
     .setSize(50, 20)
     .setValue(false)
     .setMode(ControlP5.SWITCH)
-    .setLabel("Toggle camera")
+    .setLabel("Camera")
     .setColorLabel(0)
     ;
 
@@ -469,9 +464,9 @@ void createUI() {
   cp5.addToggle("audioToggle")
     .setPosition(width*0.9, height*0.92)
     .setSize(50, 20)
-    .setValue(false)
+    .setValue(true)
     .setMode(ControlP5.SWITCH)
-    .setLabel("Toggle audio")
+    .setLabel("Audio")
     .setColorLabel(0)
     ;
 
@@ -481,7 +476,7 @@ void createUI() {
     .setSize(50, 20)
     .setValue(false)
     .setMode(ControlP5.SWITCH)
-    .setLabel("Toggle microphone")
+    .setLabel("Microphone")
     .setColorLabel(0)
     ;
 
