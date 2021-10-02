@@ -6,7 +6,7 @@ SoundFile sample;
 AudioIn in;
 
 // if camera not working change cameraInput to one of the cameras listed in the console.
-int cameraInput = 2;
+int cameraInput = 0;
 
 boolean microphoneCheck = false;
 boolean cameraCheck = false;
@@ -70,6 +70,8 @@ String dataSource0 = ("Data source:");
 String dataSource1 = ("Wind Speed and Wind Direction ");
 String dataSource2 = ("measured at UTS Building 11.");
 
+int startupCheck = 0;
+
 void setup() {
   size(800, 600);
   cp5 = new ControlP5(this);
@@ -95,6 +97,47 @@ void setup() {
     .setPosition(width -50, 5)
     .setSize(30, 30)
     .setImage(calendarImage);
+    
+    PImage infoIcon = loadImage("info.png");
+    calendarImage.resize(30, 30);
+    cp5.addButton("infoBoxToggle")
+      .setValue(50)
+      .setPosition(width - 80, height - 55)
+      .setSize(30, 30)
+      .setImage(infoIcon);
+      
+      PImage soundIcon = loadImage("sound-on.png");
+    soundIcon.resize(30, 30);
+    cp5.addButton("switchSound")
+      .setValue(50)
+      .setPosition(width - 130, height - 50)
+      .setSize(30, 30)
+      .setImage(soundIcon);
+    
+    PImage cameraIcon = loadImage("camera-off.png");
+    cameraIcon.resize(30, 30);
+    cp5.addButton("switchCamera")
+      .setValue(50)
+      .setPosition(width - 170, height - 50)
+      .setSize(30, 30)
+      .setImage(cameraIcon);
+      
+    PImage microphoneIcon = loadImage("microphone-off.png");
+    microphoneIcon.resize(30, 30);
+    cp5.addButton("switchMicrophone")
+      .setValue(50)
+      .setPosition(width - 210, height - 50)
+      .setSize(30, 30)
+      .setImage(microphoneIcon);
+      
+      PImage locationIcon = loadImage("location.png");
+    locationIcon.resize(35, 35);
+    cp5.addButton("locationIcon")
+      .setValue(50)
+      .setPosition(width - 310, height - 50)
+      .setSize(35, 35)
+      .setImage(locationIcon);
+      
 
   // adding a Wind Speed visualization as a ControlP5 slider
   cp5.addSlider("WindSpeedSlider")
@@ -264,6 +307,7 @@ void draw() {
 
   drawCompass(angle, instVel);
   showDate(timeStamps[primaryIndex]);
+  drawInfoBox();
 
 }
 ///////////////// end of draw function ////////
@@ -389,6 +433,51 @@ void controlEvent(ControlEvent theEvent) {
     } else if (theEvent.getName() == "selectDateTime") {
       toggleDateFields();
     }
+    else if(theEvent.getName() == "infoBoxToggle"){
+      toggleInfoBox();
+    }
+    else if(theEvent.getName() == "switchCamera"){
+      if (cameraCheck == false) {
+        PImage cameraIcon = loadImage("camera-off.png");
+         cameraIcon.resize(30, 30);
+        theEvent.controller().setImage(cameraIcon);
+      } else {
+        PImage cameraIcon = loadImage("camera-on.png");
+         cameraIcon.resize(30, 30);
+        theEvent.controller().setImage(cameraIcon);
+      }
+      cameraToggle();
+    }
+    else if(theEvent.getName() == "switchMicrophone"){
+      if (microphoneCheck == false) {
+        PImage microphoneIcon = loadImage("microphone-off.png");
+         microphoneIcon.resize(30, 30);
+        theEvent.controller().setImage(microphoneIcon);
+      } else {
+        PImage microphoneIcon = loadImage("microphone-on.png");
+         microphoneIcon.resize(30, 30);
+        theEvent.controller().setImage(microphoneIcon);
+      }
+      microphoneToggle();
+    }
+    else if(theEvent.getName() == "switchSound"){
+      if (audioCheck == false) {
+        PImage soundIcon = loadImage("sound-off.png");
+         soundIcon.resize(30, 30);
+        theEvent.controller().setImage(soundIcon);
+      } else {
+        PImage soundIcon = loadImage("sound-on.png");
+         soundIcon.resize(30, 30);
+        theEvent.controller().setImage(soundIcon);
+      }
+      audioToggle();
+    }
+     else if(theEvent.getName() == "locationIcon"){
+       if(startupCheck > 0){
+         link("https://goo.gl/maps/eKqbSjEP19dWP1dh9");
+       }
+      startupCheck++;
+    }
   }
 }
 
@@ -418,6 +507,8 @@ void toggleDateFields() {
   cp5.getController("EndDay").setVisible(dateVisible);
   cp5.getController("End").setVisible(dateVisible);
 }
+
+
 
 //Create UI //
 void createUI() {
@@ -452,35 +543,35 @@ void createUI() {
   // --- Start setup for controls --- //
   cp5 = new ControlP5(this);
 
-  // camera control
-  cp5.addToggle("cameraToggle")
-    .setPosition(width*0.7, height*0.92)
-    .setSize(50, 20)
-    .setValue(false)
-    .setMode(ControlP5.SWITCH)
-    .setLabel("Camera")
-    .setColorLabel(0)
-    ;
+//  // camera control
+//  cp5.addToggle("cameraToggle")
+//    .setPosition(width*0.7, height*0.92)
+//    .setSize(50, 20)
+//    .setValue(false)
+//    .setMode(ControlP5.SWITCH)
+//    .setLabel("Camera")
+//    .setColorLabel(0)
+//    ;
 
-  // audio control
-  cp5.addToggle("audioToggle")
-    .setPosition(width*0.9, height*0.92)
-    .setSize(50, 20)
-    .setValue(true)
-    .setMode(ControlP5.SWITCH)
-    .setLabel("Audio")
-    .setColorLabel(0)
-    ;
+//  // audio control
+//  cp5.addToggle("audioToggle")
+//    .setPosition(width*0.9, height*0.92)
+//    .setSize(50, 20)
+//    .setValue(true)
+//    .setMode(ControlP5.SWITCH)
+//    .setLabel("Audio")
+//    .setColorLabel(0)
+//    ;
 
-  // microphone control
-  cp5.addToggle("microphoneToggle")
-    .setPosition(width*0.8, height*0.92)
-    .setSize(50, 20)
-    .setValue(false)
-    .setMode(ControlP5.SWITCH)
-    .setLabel("Microphone")
-    .setColorLabel(0)
-    ;
+//  // microphone control
+//  cp5.addToggle("microphoneToggle")
+//    .setPosition(width*0.8, height*0.92)
+//    .setSize(50, 20)
+//    .setValue(false)
+//    .setMode(ControlP5.SWITCH)
+//    .setLabel("Microphone")
+//    .setColorLabel(0)
+//    ;
 
   // color picker label
   cp5.addLabel("PICK COLOR TO TRACK")
@@ -624,6 +715,8 @@ void createUI() {
     .setSize(50, 30)
     .setVisible(dateVisible)
     .setColor(color(255));
+    
+    
 }
 
 void showSourceData() {

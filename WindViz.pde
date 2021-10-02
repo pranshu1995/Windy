@@ -2,6 +2,10 @@ PFont mono;
 color compassColor = color(1, 116, 217);
 color compassBGColor = color(1, 45, 90);
 
+boolean infoBoxVisible = true;
+
+String toolTipText = "Interaction Guide: \n\n • CLICK on screen to disperse particles \n • Use MICROPHONE to add to wind speed with voice \n • Set tracking color by inputing RGB values and Use CAMERA to follow the tracking color \n • Press SPACE to disperse particles along with color tracking";
+
 void setting_up(){
   // Code to be put in setup():
   // add a Wind Speed visualization as a ControlP5 slider
@@ -50,4 +54,20 @@ void showDate(String timeStamp){
   fill(0);
   text(timeStamp, width - 120, 27);
   
+}
+
+void toggleInfoBox(){
+ infoBoxVisible = !infoBoxVisible;
+}
+
+void drawInfoBox(){
+  if(infoBoxVisible){
+    fill(200,200);
+    stroke(20,200);
+    rect(width - 200, height - 240, 190, 180, 25);
+    
+    fill(1, 45, 90);
+    textAlign(LEFT);
+    text(toolTipText, width - 190, height - 230, 170, 160);
+  }
 }
