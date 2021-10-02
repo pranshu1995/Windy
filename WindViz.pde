@@ -42,16 +42,18 @@ int drawCompass(float angle, float mag){
   //reposition the Label for controller 'slider'
   cp5.getController("WindSpeedSlider").getValueLabel().align(ControlP5.RIGHT, ControlP5.BOTTOM_OUTSIDE).setPaddingX(0);
   cp5.getController("WindSpeedSlider").getCaptionLabel().align(ControlP5.LEFT, ControlP5.BOTTOM_OUTSIDE).setPaddingX(0);
-  cp5.getController("WindSpeedSlider").setColorCaptionLabel(0);
+  cp5.getController("WindSpeedSlider").setColorCaptionLabel(myBackground.sideView? compassBGColor: darkModeColor);
   cp5.getController("WindSpeedSlider").setCaptionLabel("Wind Speed");
   cp5.getController("WindSpeedSlider").setValue(mag);
+  cp5.getController("WindSpeedSlider").setColorValue(myBackground.sideView? compassBGColor: darkModeColor);
+
     
   return 0;
 
 }
 
 void showDate(String timeStamp){
-  fill(0);
+  fill(myBackground.sideView? compassBGColor: darkModeColor);
   text(timeStamp, width - 120, 27);
   
 }

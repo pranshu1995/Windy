@@ -25,8 +25,15 @@ PVector[] flowfield;
 
 Particle[] particles = new Particle[particleCount];
 color particleColor= color(230, 200, 130);
+color darkModeColor = color(255);
 
 Background myBackground;
+Textlabel backgroundViewLabel;
+Button selectDateTimeButton;
+Textfield StartTimeTF, StartYearTF, StartDayTF, StartMonthTF, EndTimeTF,EndYearTF, EndMonthTF, EndDayTF;
+Textlabel  BeginTL, EndTL, colorPickerLabel;
+Numberbox redNumberBox, greenNumberBox, blueNumberBox;
+Toggle cameraToggle, audioToggle, microphoneToggle;
 
 float zoff = 0;
 
@@ -48,6 +55,7 @@ String startHour = "13";  // Value: 00-23
 String endHour = "13";  // Value: 00-23
 PFont font;
 boolean dateVisible = true;
+PImage calendarImage;
 
 // Variables for collision
 float spring = 1;
@@ -90,6 +98,7 @@ void setup() {
     particles[i] = new Particle(i, particles);
   }
   fetchData();
+
   PImage calendarImage = loadImage("calendar.png");
   calendarImage.resize(30, 30);
   cp5.addButton("selectDateTime")
@@ -381,58 +390,97 @@ float distSq(float x1, float y1, float z1, float x2, float y2, float z2) {
 // --- End color tracking helper functions   --- //
 
 //Date Time Picker//
-void controlEvent(ControlEvent theEvent) {
-  if (theEvent.isAssignableFrom(Textfield.class)) {
-    if (theEvent.getName() == "StartTime") {
-      startHour = theEvent.getStringValue();
-      cp5.get(Textfield.class, "StartTime").setValue(startHour);
-      //cp5.get(Textfield.class,"StartTime").submit();
-      fetchData();
-    }
-    if (theEvent.getName() == "StartYear") {
-      (fromDate.split("-", 3)[0]) = theEvent.getStringValue();
-      fetchData();
-    }
-    if (theEvent.getName() == "StartMonth") {
-      (fromDate.split("-", 3)[1]) = theEvent.getStringValue();
-      fetchData();
-    }
-    if (theEvent.getName() == "StartDay") {
-      (fromDate.split("-", 3)[2]) = theEvent.getStringValue();
-      fetchData();
-    }// begin date
 
-    if (theEvent.getName() == "EndTime") {
-      endHour = theEvent.getStringValue();
-      fetchData();
-    }
-    if (theEvent.getName() == "EndYear") {
-      (toDate.split("-", 3)[0]) = theEvent.getStringValue();
-      fetchData();
-    }
-    if (theEvent.getName() == "EndMonth") {
-      (toDate.split("-", 3)[1]) = theEvent.getStringValue();
-      fetchData();
-    }
-    if (theEvent.getName() == "EndDay") {
-      (toDate.split("-", 3)[2]) = theEvent.getStringValue();
-      fetchData();
-    }
-  } else if (theEvent.isAssignableFrom(Button.class)) {
-    if (theEvent.getName() == "changeBackground") {
-      myBackground.sideView = !myBackground.sideView;
-      if (myBackground.sideView) {
-        PImage buttonImage = loadImage(myBackground.backgroundImagesName.get(0));//loadImage("water.jpg");
-        buttonImage.resize(40, 40);
-        theEvent.controller().setImage(buttonImage);
-      } else {
-        PImage buttonImage = loadImage(myBackground.backgroundImagesName.get(1));//loadImage("water.jpg");
-        buttonImage.resize(40, 40);
-        theEvent.controller().setImage(buttonImage);
-      }
-    } else if (theEvent.getName() == "selectDateTime") {
-      toggleDateFields();
-    }
+void controlEvent(ControlEvent theEvent) {     
+     if(theEvent.isAssignableFrom(Textfield.class)){
+       if(theEvent.getName() == "StartTime"){
+         startHour = theEvent.getStringValue();
+         cp5.get(Textfield.class,"StartTime").setValue(startHour);
+         //cp5.get(Textfield.class,"StartTime").submit();
+         fetchData();
+       }
+       if(theEvent.getName() == "StartYear"){
+         (fromDate.split("-",3)[0]) = theEvent.getStringValue();
+         fetchData();
+       }
+       if(theEvent.getName() == "StartMonth"){
+         (fromDate.split("-",3)[1]) = theEvent.getStringValue();
+         fetchData();
+       }
+       if(theEvent.getName() == "StartDay"){
+         (fromDate.split("-",3)[2]) = theEvent.getStringValue();
+         fetchData();
+       }// begin date
+       
+        if(theEvent.getName() == "EndTime"){
+         endHour = theEvent.getStringValue();
+         fetchData();
+       }
+       if(theEvent.getName() == "EndYear"){
+         (toDate.split("-",3)[0]) = theEvent.getStringValue();
+         fetchData();
+       }
+       if(theEvent.getName() == "EndMonth"){
+         (toDate.split("-",3)[1]) = theEvent.getStringValue();
+         fetchData();
+       }
+       if(theEvent.getName() == "EndDay"){
+         (toDate.split("-",3)[2]) = theEvent.getStringValue();
+         fetchData();
+       }
+     }else if(theEvent.isAssignableFrom(Button.class)){
+       if(theEvent.getName() == "changeBackground"){
+         myBackground.sideView = !myBackground.sideView;
+         if(myBackground.sideView) {
+           PImage buttonImage = loadImage(myBackground.backgroundImagesName.get(0));//loadImage("water.jpg");
+           buttonImage.resize(40,40);
+           theEvent.controller().setImage(buttonImage);  
+           //cp5.getController("BackgroundView").setLabel("Side View");
+           BeginTL.setColor(compassBGColor);
+           EndTL.setColor(compassBGColor);
+           EndTimeTF.setColorLabel(compassBGColor);
+           EndYearTF.setColorLabel(compassBGColor);
+           EndMonthTF.setColorLabel(compassBGColor);
+           EndDayTF.setColorLabel(compassBGColor);
+           backgroundViewLabel.setColor(compassBGColor);
+           colorPickerLabel.setColor(compassBGColor);
+           redNumberBox.setColorLabel(compassBGColor);
+           greenNumberBox.setColorLabel(compassBGColor);
+           blueNumberBox.setColorLabel(compassBGColor);
+           cameraToggle.setColorLabel(compassBGColor);
+           audioToggle.setColorLabel(compassBGColor);
+           microphoneToggle.setColorLabel(compassBGColor);
+           
+         } else {
+           PImage buttonImage = loadImage(myBackground.backgroundImagesName.get(1));//loadImage("water.jpg");
+           buttonImage.resize(40,40);
+           theEvent.controller().setImage(buttonImage);
+           //cp5.getController("BackgroundView").setLabel("Top View");
+           //cp5.getController("End").setColor(color(255));
+           BeginTL.setColor(darkModeColor);
+           EndTL.setColor(darkModeColor);
+           EndTimeTF.setColorLabel(darkModeColor);
+           EndYearTF.setColorLabel(darkModeColor);
+           EndMonthTF.setColorLabel(darkModeColor);
+           EndDayTF.setColorLabel(darkModeColor);
+           backgroundViewLabel.setColor(darkModeColor);
+           colorPickerLabel.setColor(darkModeColor);
+           redNumberBox.setColorLabel(darkModeColor);
+           greenNumberBox.setColorLabel(darkModeColor);
+           blueNumberBox.setColorLabel(darkModeColor);
+           cameraToggle.setColorLabel(darkModeColor);
+           audioToggle.setColorLabel(darkModeColor);
+           microphoneToggle.setColorLabel(darkModeColor);
+         }
+           backgroundViewLabel.setText(!myBackground.sideView?"Side View": "Top View");
+           calendarImage =  (myBackground.sideView?  loadImage("blueCal.png") : loadImage("whiteCal.png"));
+           calendarImage.resize(30, 30);
+           selectDateTimeButton.setImage(null);
+           selectDateTimeButton.setImage(calendarImage);
+       }else if(theEvent.getName() == "selectDateTime"){
+         toggleDateFields();
+       }
+       
     else if(theEvent.getName() == "infoBoxToggle"){
       toggleInfoBox();
     }
@@ -478,22 +526,19 @@ void controlEvent(ControlEvent theEvent) {
        }
       startupCheck++;
     }
-  }
+     }
+
 }
 
 //Setting Button Image background
 void setupBackground() {
   myBackground =  new Background( new PVector(0.0, 0.0));
-  cp5 = new ControlP5(this);
-  font = createFont("arial", 20);
-  PImage buttonImage = loadImage(myBackground.backgroundImagesName.get(0));//loadImage("water.jpg");
-  buttonImage.resize(40, 40);
-  cp5.addButton("changeBackground")
-    .setValue(128)
-    .setPosition(20, height - 50)
-    .setSize(40, 40)
-    .setImage(buttonImage);
+  //cp5 = new ControlP5(this);
+  //font = createFont("arial", 20);
+  
+  
 }
+
 void toggleDateFields() {
   dateVisible = !dateVisible;
   cp5.getController("StartTime").setVisible(dateVisible);
@@ -512,6 +557,7 @@ void toggleDateFields() {
 
 //Create UI //
 void createUI() {
+  
   fill(255);
   font = createFont("arial", 12);
 
@@ -541,7 +587,7 @@ void createUI() {
   // --- End setup for color tracking   --- //
 
   // --- Start setup for controls --- //
-  cp5 = new ControlP5(this);
+  //cp5 = new ControlP5(this);
 
 //  // camera control
 //  cp5.addToggle("cameraToggle")
@@ -573,14 +619,15 @@ void createUI() {
 //    .setColorLabel(0)
 //    ;
 
+
   // color picker label
-  cp5.addLabel("PICK COLOR TO TRACK")
+  colorPickerLabel = cp5.addLabel("PICK COLOR TO TRACK")
     .setPosition(width*0.195, height*0.895)
     .setColor(0)
     ;
 
   // red
-  cp5.addNumberbox("r")
+  redNumberBox = cp5.addNumberbox("r")
     .setPosition(width*0.2, height*0.92)
     .setSize(30, 20)
     .setColorLabel(0)
@@ -590,7 +637,7 @@ void createUI() {
     ;
 
   // g
-  cp5.addNumberbox("g")
+  greenNumberBox = cp5.addNumberbox("g")
     .setPosition(width*0.24, height*0.92)
     .setSize(30, 20)
     .setColorLabel(0)
@@ -600,7 +647,7 @@ void createUI() {
     ;
 
   // b
-  cp5.addNumberbox("b")
+  blueNumberBox = cp5.addNumberbox("b")
     .setPosition(width*0.28, height*0.92)
     .setSize(30, 20)
     .setColorLabel(0)
@@ -612,29 +659,55 @@ void createUI() {
   // --- End setup for controls --- //
 
   //Start Date Time Picker//
-  cp5.addTextfield("StartTime")
+  
+  PImage buttonImage = loadImage(myBackground.backgroundImagesName.get(0));//loadImage("water.jpg");
+  buttonImage.resize(40, 40);
+  cp5.addButton("changeBackground")
+      .setPosition(20,height - 60)
+      .setSize(40,40)
+      .setImage(buttonImage)
+       ;
+     
+  backgroundViewLabel = cp5.addLabel("BackgroundViewLabel")
+      .setPosition(15,height - 70)
+      .setColor(compassBGColor)
+      .setText(!myBackground.sideView?"Side View": "Top View");
+      
+  //calendarImage = loadImage("blueCal.png");
+  calendarImage =  (myBackground.sideView?  loadImage("blueCal.png") : loadImage("whiteCal.png"));
+  calendarImage.resize(30, 30);
+  selectDateTimeButton = cp5.addButton("selectDateTime")
+     .setPosition(width -50, 5)
+     .setSize(30, 30)
+     .setImage(calendarImage);
+        
+  StartTimeTF = cp5.addTextfield("StartTime")
     .setFont(font)
     .setPosition(width -50, 40)
     .setSize(30, 30)
     .setColor(color(255))
+    .setColorBackground(compassBGColor)
+    .setColorActive(color(255,255,255))
     .setText(startHour)
     .setAutoClear(false)
     .setLabel("")
     .setVisible(dateVisible)
     .setLabelVisible(false);
 
-  cp5.addTextfield("StartYear")
+  StartYearTF = cp5.addTextfield("StartYear")
     .setFont(font)
     .setPosition(width -100, 40)
     .setSize(40, 30)
     .setText(fromDate.split("-", 3)[0])
     .setColor(color(255))
+    .setColorBackground(compassBGColor)
+    .setColorActive(color(255,255,255))
     .setAutoClear(false)
     .setVisible(dateVisible)
     .setLabel("")
     .setLabelVisible(false);
 
-  cp5.addTextfield("StartMonth")
+  StartMonthTF = cp5.addTextfield("StartMonth")
     .setFont(font)
     .setPosition(width -150, 40)
     .setSize(40, 30)
@@ -643,9 +716,11 @@ void createUI() {
     .setLabelVisible(false)
     .setAutoClear(false)
     .setVisible(dateVisible)
-    .setColor(color(255));
+    .setColor(color(255))
+    .setColorBackground(compassBGColor)
+    .setColorActive(color(255,255,255));
 
-  cp5.addTextfield("StartDay")
+  StartDayTF = cp5.addTextfield("StartDay")
     .setFont(font)
     .setPosition(width -200, 40)
     .setSize(30, 30)
@@ -654,39 +729,62 @@ void createUI() {
     .setLabelVisible(false)
     .setAutoClear(false)
     .setVisible(dateVisible)
-    .setColor(color(255));
+    .setColor(color(255))
+    .setColorBackground(compassBGColor)
+    .setColorActive(color(255,255,255));
 
-  cp5.addTextlabel("Begin")
+  BeginTL = cp5.addTextlabel("Begin")
     .setText("Start")
     .setFont(font)
     .setPosition(width - 250, 45)
     .setSize(50, 30)
     .setVisible(dateVisible)
-    .setColor(color(255));
+    .setColor(color(compassBGColor));
 
-  cp5.addTextfield("EndTime")
+     //cp5.begin();
+     // cp5.addBackground("abc")
+     // .setBackgroundColor(color(1,116,217));
+     //  cp5.end();
+
+  EndTimeTF = cp5.addTextfield("EndTime")
     .setFont(font)
     .setPosition(width -50, 100)
     .setSize(30, 30)
     .setColor(color(255))
+    .setColorLabel(compassBGColor)
+    .setColorBackground(compassBGColor)
+    .setColorActive(color(255,255,255))
     .setText(endHour)
     .setAutoClear(false)
     .setVisible(dateVisible)
     .setLabel("Time")
     .setLabelVisible(true);
-
-  cp5.addTextfield("EndYear")
+  
+    //cp5.addTextfield("EndTime")
+    //.setValue(0)
+    //.setPosition(width -50, 100)
+    //.setSize(30, 30)
+    //.setColorBackground(compassBGColor)
+    //.setColor(255)
+    //.setColorForeground(color(255,0,0))
+    //.setColorActive(color(255,255,255));
+    
+   
+  EndYearTF = cp5.addTextfield("EndYear")
     .setFont(font)
     .setPosition(width -100, 100)
     .setSize(40, 30)
     .setText(toDate.split("-", 3)[0])
     .setColor(color(255))
+    .setColorLabel(compassBGColor)
+    .setColorBackground(compassBGColor)
+    .setColorActive(color(255,255,255))
     .setAutoClear(false)
     .setVisible(dateVisible)
     .setLabel("Year")
     .setLabelVisible(true);
 
-  cp5.addTextfield("EndMonth")
+  EndMonthTF = cp5.addTextfield("EndMonth")
     .setFont(font)
     .setPosition(width -150, 100)
     .setSize(40, 30)
@@ -695,9 +793,12 @@ void createUI() {
     .setAutoClear(false)
     .setVisible(dateVisible)
     .setLabelVisible(true)
-    .setColor(color(255));
+    .setColor(color(255))
+    .setColorLabel(compassBGColor)
+    .setColorBackground(compassBGColor)
+    .setColorActive(color(255,255,255));
 
-  cp5.addTextfield("EndDay")
+  EndDayTF = cp5.addTextfield("EndDay")
     .setFont(font)
     .setPosition(width -200, 100)
     .setSize(30, 30)
@@ -706,23 +807,25 @@ void createUI() {
     .setLabelVisible(true)
     .setVisible(dateVisible)
     .setAutoClear(false)
-    .setColor(color(255));
+    .setColor(color(255))
+    .setColorBackground(compassBGColor)
+    .setColorLabel(compassBGColor)
+    .setColorActive(color(255,255,255));
 
-  cp5.addTextlabel("End")
+  EndTL = cp5.addTextlabel("End")
     .setText("End")
     .setFont(font)
     .setPosition(width - 250, 110)
     .setSize(50, 30)
     .setVisible(dateVisible)
-    .setColor(color(255));
-    
-    
+    .setColor(color(compassBGColor));      
+
 }
 
 void showSourceData() {
   pushMatrix();
   pushStyle();
-  fill(0);
+  fill(myBackground.sideView?compassBGColor:darkModeColor);
   textAlign(CENTER);
   text(dataSource0, width/2, height*0.92);
   text(dataSource1, width/2, height*0.94);

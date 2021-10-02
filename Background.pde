@@ -32,7 +32,7 @@
       Background(PVector vel){
       Font = createFont("Helvetica-Bold", 30);
       this.velocity = vel;  
-      sideView = false;
+      sideView = true;
 
       particleSystems = new ArrayList<ParticleSystem>();
       
@@ -64,7 +64,7 @@
       backgroundImages.get(0).resize(1600,1600);
       backgroundImages.get(1).resize(1600,1600);
       
-      smallPlant2 = new SmallPlant(new PVector(width/20, 9*height/10),80,8,velocity);
+     // smallPlant2 = new SmallPlant(new PVector(width/20, 9*height/10),80,8,velocity);
       smallPlant3 = new SmallPlant(new PVector(width/10+30, 8*height/10),60,6,velocity);
       smallPlant4 = new SmallPlant(new PVector(width/8, 7*height/10),50,8,velocity);
       smallPlant5 = new SmallPlant(new PVector(width/6+50, 7*height/10),30,5,velocity);
@@ -109,7 +109,7 @@
      
       drawDeserts();
       fill(255);
-      smallPlant2.draw(vel);
+      //smallPlant2.draw(vel);
       smallPlant3.draw(vel);
       smallPlant4.draw(vel);
       smallPlant5.draw(vel);
