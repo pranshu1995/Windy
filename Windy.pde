@@ -9,8 +9,8 @@ AudioIn in;
 int cameraInput = 2;
 
 boolean microphoneCheck = false;
-boolean cameraCheck = true;
-boolean audioCheck = true;
+boolean cameraCheck = false;
+boolean audioCheck = false;
 
 float inc = 0.1;
 int scale = 20;
@@ -92,7 +92,6 @@ void setup() {
     .setSize(30, 30)
     .setImage(calendarImage);
 }
-
 
 void fetchData() {
   // Load Wind Speed data from EIF portal in CSV format
@@ -215,13 +214,8 @@ void draw() {
   // --- Start draw method for track color --- //
   video.loadPixels();
   //imageMode(CORNER);
-  pushStyle();
-  fill(0);
-  textAlign(CENTER);
-  text(dataSource0,width/2,height*0.94);
-  text(dataSource1,width/2,height*0.96);
-  text(dataSource2,width/2,height*0.98);
-  popStyle();
+
+  showSourceData();
 
   // set trackColor to slider values
   trackColor = color(r, g, b);
@@ -371,7 +365,7 @@ void mousePressed() {
 }
 
 void cameraToggle() {
-  if (cameraCheck == false) {
+  if (cameraCheck == true) {
     // disable camera
     video.start();
   } else {
@@ -385,24 +379,26 @@ void cameraToggle() {
 void microphoneToggle() {
   if (microphoneCheck == true) {
     in.stop();
-    sample.play();
+    //sample.play();
   } else {
     in = new AudioIn(this, 0);
     in.start();
     amp.input(in);
-    sample.pause();
+    //sample.pause();
   }
   microphoneCheck = !microphoneCheck;
   //println("newVal ", microphoneCheck);
 }
 
 void audioToggle() {
-  if (microphoneCheck == true) {
-      in.stop();
+  if (audioCheck == false) {
+    if (sample.isPlaying()) {
+      sample.pause();
+    }
   } else {
-    sample.pause();
+    sample.play();
   }
-  //audioCheck = !audioCheck;
+  audioCheck = !audioCheck;
   //println("mic check", microphoneCheck);
 }
 
@@ -611,4 +607,16 @@ void selectDate() {
     .setSize(50, 30)
     .setVisible(dateVisible)
     .setColor(color(255));
+}
+
+void showSourceData() {
+  pushMatrix();
+  pushStyle();
+  fill(0);
+  textAlign(CENTER);
+  text(dataSource0,width/2,height*0.94);
+  text(dataSource1,width/2,height*0.96);
+  text(dataSource2,width/2,height*0.98);
+  popStyle();
+  popMatrix();
 }
