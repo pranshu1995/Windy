@@ -6,7 +6,7 @@ SoundFile sample;
 AudioIn in;
 
 // if camera not working change cameraInput to one of the cameras listed in the console.
-int cameraInput = 0;
+int cameraInput = 2;
 
 boolean microphoneCheck = false;
 boolean cameraCheck = false;
@@ -74,14 +74,14 @@ void setup() {
   size(800, 600);
   cp5 = new ControlP5(this);
 
-  
+
   setupBackground();
   createUI();
-  
+
   //background(255);
   rows = floor(height/scale) + 1;
   cols = floor(width/scale) + 1;
-  
+
   flowfield = new PVector[cols*rows];
 
   for ( int i=0; i<particleCount; i++) {
@@ -95,13 +95,13 @@ void setup() {
     .setPosition(width -50, 5)
     .setSize(30, 30)
     .setImage(calendarImage);
-    
+
   // adding a Wind Speed visualization as a ControlP5 slider
   cp5.addSlider("WindSpeedSlider")
-       .setSize(100,15)
-       .setRange(0,10)
-       .setPosition(width/2 -50, 50)
-       .setColorValueLabel(0);
+    .setSize(100, 15)
+    .setRange(0, 10)
+    .setPosition(width/2 -50, 50)
+    .setColorValueLabel(0);
 }
 
 void fetchData() {
@@ -120,7 +120,6 @@ void fetchData() {
     windDirectionArray[i] = windDirecrion.getFloat(i, 1);
     windSpeedArray[i] = windSpeed.getFloat(i, 1);
   }
-
 }
 
 void draw() {
@@ -147,9 +146,9 @@ void draw() {
   float avgX = 0;
   float avgY = 0;
   int count = 0;
-  
+
   float angle= 0;
-  
+
 
   // loop through all pixels within video capture
   for (int x = 0; x < video.width; x++ ) {
@@ -289,19 +288,19 @@ void mousePressed() {
 }
 
 void cameraToggle() {
-  if (cameraCheck == true) {
-    // disable camera
-    video.start();
-  } else {
+  if (cameraCheck == false) {
     // enable camera
     video.stop();
+  } else {
+    // disable camera
+    video.start();
   }
   cameraCheck = !cameraCheck;
-  //println("camera is", cameraCheck);
+  //println("camera check", cameraCheck);
 }
 
 void microphoneToggle() {
-  if (microphoneCheck == true) {
+  if (microphoneCheck == false) {
     in.stop();
     //sample.play();
   } else {
@@ -317,13 +316,14 @@ void microphoneToggle() {
 void audioToggle() {
   if (audioCheck == false) {
     if (sample.isPlaying()) {
-      sample.pause();
+      sample.stop();
     }
   } else {
+    sample.stop();
     sample.play();
   }
   audioCheck = !audioCheck;
-  //println("mic check", microphoneCheck);
+  //println("audio check", audioCheck);
 }
 
 // --- Start color tracking helper functions   --- //
@@ -340,59 +340,59 @@ float distSq(float x1, float y1, float z1, float x2, float y2, float z2) {
 // --- End color tracking helper functions   --- //
 
 //Date Time Picker//
-void controlEvent(ControlEvent theEvent) {     
-     if(theEvent.isAssignableFrom(Textfield.class)){
-       if(theEvent.getName() == "StartTime"){
-         startHour = theEvent.getStringValue();
-         cp5.get(Textfield.class,"StartTime").setValue(startHour);
-         //cp5.get(Textfield.class,"StartTime").submit();
-         fetchData();
-       }
-       if(theEvent.getName() == "StartYear"){
-         (fromDate.split("-",3)[0]) = theEvent.getStringValue();
-         fetchData();
-       }
-       if(theEvent.getName() == "StartMonth"){
-         (fromDate.split("-",3)[1]) = theEvent.getStringValue();
-         fetchData();
-       }
-       if(theEvent.getName() == "StartDay"){
-         (fromDate.split("-",3)[2]) = theEvent.getStringValue();
-         fetchData();
-       }// begin date
-       
-        if(theEvent.getName() == "EndTime"){
-         endHour = theEvent.getStringValue();
-         fetchData();
-       }
-       if(theEvent.getName() == "EndYear"){
-         (toDate.split("-",3)[0]) = theEvent.getStringValue();
-         fetchData();
-       }
-       if(theEvent.getName() == "EndMonth"){
-         (toDate.split("-",3)[1]) = theEvent.getStringValue();
-         fetchData();
-       }
-       if(theEvent.getName() == "EndDay"){
-         (toDate.split("-",3)[2]) = theEvent.getStringValue();
-         fetchData();
-       }
-     }else if(theEvent.isAssignableFrom(Button.class)){
-       if(theEvent.getName() == "changeBackground"){
-         myBackground.sideView = !myBackground.sideView;
-         if(myBackground.sideView) {
-           PImage buttonImage = loadImage(myBackground.backgroundImagesName.get(0));//loadImage("water.jpg");
-           buttonImage.resize(40,40);
-           theEvent.controller().setImage(buttonImage);
-         } else {
-           PImage buttonImage = loadImage(myBackground.backgroundImagesName.get(1));//loadImage("water.jpg");
-           buttonImage.resize(40,40);
-           theEvent.controller().setImage(buttonImage);
-         }
-       }else if(theEvent.getName() == "selectDateTime"){
-         toggleDateFields();
-       }
-     }
+void controlEvent(ControlEvent theEvent) {
+  if (theEvent.isAssignableFrom(Textfield.class)) {
+    if (theEvent.getName() == "StartTime") {
+      startHour = theEvent.getStringValue();
+      cp5.get(Textfield.class, "StartTime").setValue(startHour);
+      //cp5.get(Textfield.class,"StartTime").submit();
+      fetchData();
+    }
+    if (theEvent.getName() == "StartYear") {
+      (fromDate.split("-", 3)[0]) = theEvent.getStringValue();
+      fetchData();
+    }
+    if (theEvent.getName() == "StartMonth") {
+      (fromDate.split("-", 3)[1]) = theEvent.getStringValue();
+      fetchData();
+    }
+    if (theEvent.getName() == "StartDay") {
+      (fromDate.split("-", 3)[2]) = theEvent.getStringValue();
+      fetchData();
+    }// begin date
+
+    if (theEvent.getName() == "EndTime") {
+      endHour = theEvent.getStringValue();
+      fetchData();
+    }
+    if (theEvent.getName() == "EndYear") {
+      (toDate.split("-", 3)[0]) = theEvent.getStringValue();
+      fetchData();
+    }
+    if (theEvent.getName() == "EndMonth") {
+      (toDate.split("-", 3)[1]) = theEvent.getStringValue();
+      fetchData();
+    }
+    if (theEvent.getName() == "EndDay") {
+      (toDate.split("-", 3)[2]) = theEvent.getStringValue();
+      fetchData();
+    }
+  } else if (theEvent.isAssignableFrom(Button.class)) {
+    if (theEvent.getName() == "changeBackground") {
+      myBackground.sideView = !myBackground.sideView;
+      if (myBackground.sideView) {
+        PImage buttonImage = loadImage(myBackground.backgroundImagesName.get(0));//loadImage("water.jpg");
+        buttonImage.resize(40, 40);
+        theEvent.controller().setImage(buttonImage);
+      } else {
+        PImage buttonImage = loadImage(myBackground.backgroundImagesName.get(1));//loadImage("water.jpg");
+        buttonImage.resize(40, 40);
+        theEvent.controller().setImage(buttonImage);
+      }
+    } else if (theEvent.getName() == "selectDateTime") {
+      toggleDateFields();
+    }
+  }
 }
 
 //Setting Button Image background
@@ -403,12 +403,12 @@ void setupBackground() {
   PImage buttonImage = loadImage(myBackground.backgroundImagesName.get(0));//loadImage("water.jpg");
   buttonImage.resize(40, 40);
   cp5.addButton("changeBackground")
-      .setValue(128)
-      .setPosition(20,height - 50)
-      .setSize(40,40)
-      .setImage(buttonImage);
+    .setValue(128)
+    .setPosition(20, height - 50)
+    .setSize(40, 40)
+    .setImage(buttonImage);
 }
-void toggleDateFields(){
+void toggleDateFields() {
   dateVisible = !dateVisible;
   cp5.getController("StartTime").setVisible(dateVisible);
   cp5.getController("StartYear").setVisible(dateVisible);
@@ -423,9 +423,9 @@ void toggleDateFields(){
 }
 
 //Create UI //
-void createUI(){
+void createUI() {
   fill(255);
-  font = createFont("arial",12);
+  font = createFont("arial", 12);
 
   amp = new Amplitude(this);
   in = new AudioIn(this, 0);
@@ -522,7 +522,7 @@ void createUI(){
     ;
 
   // --- End setup for controls --- //
-  
+
   //Start Date Time Picker//
   cp5.addTextfield("StartTime")
     .setFont(font)
@@ -623,10 +623,10 @@ void createUI(){
   cp5.addTextlabel("End")
     .setText("End")
     .setFont(font)
-    .setPosition(width - 250,110)
-    .setSize(50,30)
+    .setPosition(width - 250, 110)
+    .setSize(50, 30)
     .setVisible(dateVisible)
-    .setColor(color(255));      
+    .setColor(color(255));
 }
 
 void showSourceData() {
@@ -634,9 +634,9 @@ void showSourceData() {
   pushStyle();
   fill(0);
   textAlign(CENTER);
-  text(dataSource0,width/2,height*0.94);
-  text(dataSource1,width/2,height*0.96);
-  text(dataSource2,width/2,height*0.98);
+  text(dataSource0, width/2, height*0.92);
+  text(dataSource1, width/2, height*0.94);
+  text(dataSource2, width/2, height*0.96);
   popStyle();
   popMatrix();
 }
