@@ -31,7 +31,7 @@ Background myBackground;
 Textlabel backgroundViewLabel;
 Button selectDateTimeButton;
 Textfield StartTimeTF, StartYearTF, StartDayTF, StartMonthTF, EndTimeTF,EndYearTF, EndMonthTF, EndDayTF;
-Textlabel  BeginTL, EndTL, colorPickerLabel;
+Textlabel  BeginTL, EndTL, colorPickerLabel,updateLabel;
 Numberbox redNumberBox, greenNumberBox, blueNumberBox;
 Toggle cameraToggle, audioToggle, microphoneToggle;
 
@@ -345,20 +345,18 @@ void controlEvent(ControlEvent theEvent) {
      if(theEvent.isAssignableFrom(Textfield.class)){
        if(theEvent.getName() == "StartTime"){
          startHour = theEvent.getStringValue();
-         cp5.get(Textfield.class,"StartTime").setValue(startHour);
-         //cp5.get(Textfield.class,"StartTime").submit();
          fetchData();
        }
        if(theEvent.getName() == "StartYear"){
-         (fromDate.split("-",3)[0]) = theEvent.getStringValue();
+         fromDate = theEvent.getStringValue() + "-" + fromDate.split("-",3)[1] + "-" + fromDate.split("-",3)[2];
          fetchData();
        }
        if(theEvent.getName() == "StartMonth"){
-         (fromDate.split("-",3)[1]) = theEvent.getStringValue();
+         fromDate =  fromDate.split("-",3)[0] + "-" + theEvent.getStringValue() + "-" + fromDate.split("-",3)[2];
          fetchData();
        }
        if(theEvent.getName() == "StartDay"){
-         (fromDate.split("-",3)[2]) = theEvent.getStringValue();
+         fromDate =  fromDate.split("-",3)[0] + "-" + fromDate.split("-",3)[1] + "-" + theEvent.getStringValue();
          fetchData();
        }// begin date
        
@@ -367,15 +365,15 @@ void controlEvent(ControlEvent theEvent) {
          fetchData();
        }
        if(theEvent.getName() == "EndYear"){
-         (toDate.split("-",3)[0]) = theEvent.getStringValue();
+         toDate = theEvent.getStringValue() + "-" + toDate.split("-",3)[1] + "-" + toDate.split("-",3)[2];
          fetchData();
        }
        if(theEvent.getName() == "EndMonth"){
-         (toDate.split("-",3)[1]) = theEvent.getStringValue();
+         toDate =  toDate.split("-",3)[0] + "-" + theEvent.getStringValue() + "-" + toDate.split("-",3)[2];
          fetchData();
        }
        if(theEvent.getName() == "EndDay"){
-         (toDate.split("-",3)[2]) = theEvent.getStringValue();
+         toDate =  toDate.split("-",3)[0] + "-" + toDate.split("-",3)[1] + "-" + theEvent.getStringValue();
          fetchData();
        }
      }else if(theEvent.isAssignableFrom(Button.class)){
@@ -387,6 +385,7 @@ void controlEvent(ControlEvent theEvent) {
            theEvent.controller().setImage(buttonImage);  
            //cp5.getController("BackgroundView").setLabel("Side View");
            BeginTL.setColor(compassBGColor);
+           updateLabel.setColor(compassBGColor);
            EndTL.setColor(compassBGColor);
            EndTimeTF.setColorLabel(compassBGColor);
            EndYearTF.setColorLabel(compassBGColor);
@@ -406,6 +405,7 @@ void controlEvent(ControlEvent theEvent) {
            //cp5.getController("BackgroundView").setLabel("Top View");
            //cp5.getController("End").setColor(color(255));
            BeginTL.setColor(darkModeColor);
+           updateLabel.setColor(darkModeColor);
            EndTL.setColor(darkModeColor);
            EndTimeTF.setColorLabel(darkModeColor);
            EndYearTF.setColorLabel(darkModeColor);
@@ -497,6 +497,7 @@ void toggleDateFields() {
   cp5.getController("EndMonth").setVisible(dateVisible);
   cp5.getController("EndDay").setVisible(dateVisible);
   cp5.getController("End").setVisible(dateVisible);
+  cp5.getController("Update").setVisible(dateVisible);
 }
 
 
@@ -732,6 +733,13 @@ void createUI() {
     .setVisible(dateVisible)
     .setColor(color(compassBGColor));
 
+  updateLabel = cp5.addTextlabel("Update")
+    .setText("Press enter to update")
+    .setFont(font)
+    .setPosition(width - 140, 150)
+    .setSize(50, 30)
+    .setVisible(dateVisible)
+    .setColor(color(compassBGColor));
      //cp5.begin();
      // cp5.addBackground("abc")
      // .setBackgroundColor(color(1,116,217));
