@@ -54,7 +54,7 @@ String toDate = "2021-09-21";  // Format: YYYY-MM-DD
 String startHour = "13";  // Value: 00-23
 String endHour = "13";  // Value: 00-23
 PFont font;
-boolean dateVisible = true;
+boolean dateVisible = false;
 PImage calendarImage;
 
 // Variables for collision
@@ -98,56 +98,6 @@ void setup() {
     particles[i] = new Particle(i, particles);
   }
   fetchData();
-
-  PImage calendarImage = loadImage("calendar.png");
-  calendarImage.resize(30, 30);
-  cp5.addButton("selectDateTime")
-    .setValue(50)
-    .setPosition(width -50, 5)
-    .setSize(30, 30)
-    .setImage(calendarImage);
-    
-    PImage infoIcon = loadImage("info.png");
-    calendarImage.resize(30, 30);
-    cp5.addButton("infoBoxToggle")
-      .setValue(50)
-      .setPosition(width - 80, height - 55)
-      .setSize(30, 30)
-      .setImage(infoIcon);
-      
-      PImage soundIcon = loadImage("sound-on.png");
-    soundIcon.resize(30, 30);
-    cp5.addButton("switchSound")
-      .setValue(50)
-      .setPosition(width - 130, height - 50)
-      .setSize(30, 30)
-      .setImage(soundIcon);
-    
-    PImage cameraIcon = loadImage("camera-off.png");
-    cameraIcon.resize(30, 30);
-    cp5.addButton("switchCamera")
-      .setValue(50)
-      .setPosition(width - 170, height - 50)
-      .setSize(30, 30)
-      .setImage(cameraIcon);
-      
-    PImage microphoneIcon = loadImage("microphone-off.png");
-    microphoneIcon.resize(30, 30);
-    cp5.addButton("switchMicrophone")
-      .setValue(50)
-      .setPosition(width - 210, height - 50)
-      .setSize(30, 30)
-      .setImage(microphoneIcon);
-      
-      PImage locationIcon = loadImage("location.png");
-    locationIcon.resize(35, 35);
-    cp5.addButton("locationIcon")
-      .setValue(50)
-      .setPosition(width - 310, height - 50)
-      .setSize(35, 35)
-      .setImage(locationIcon);
-      
-
   // adding a Wind Speed visualization as a ControlP5 slider
   cp5.addSlider("WindSpeedSlider")
     .setSize(100, 15)
@@ -447,9 +397,7 @@ void controlEvent(ControlEvent theEvent) {
            redNumberBox.setColorLabel(compassBGColor);
            greenNumberBox.setColorLabel(compassBGColor);
            blueNumberBox.setColorLabel(compassBGColor);
-           cameraToggle.setColorLabel(compassBGColor);
-           audioToggle.setColorLabel(compassBGColor);
-           microphoneToggle.setColorLabel(compassBGColor);
+
            
          } else {
            PImage buttonImage = loadImage(myBackground.backgroundImagesName.get(1));//loadImage("water.jpg");
@@ -468,9 +416,7 @@ void controlEvent(ControlEvent theEvent) {
            redNumberBox.setColorLabel(darkModeColor);
            greenNumberBox.setColorLabel(darkModeColor);
            blueNumberBox.setColorLabel(darkModeColor);
-           cameraToggle.setColorLabel(darkModeColor);
-           audioToggle.setColorLabel(darkModeColor);
-           microphoneToggle.setColorLabel(darkModeColor);
+
          }
            backgroundViewLabel.setText(!myBackground.sideView?"Side View": "Top View");
            calendarImage =  (myBackground.sideView?  loadImage("blueCal.png") : loadImage("whiteCal.png"));
@@ -496,7 +442,7 @@ void controlEvent(ControlEvent theEvent) {
       }
       cameraToggle();
     }
-    else if(theEvent.getName() == "switchMicrophone"){
+   else if(theEvent.getName() == "switchMicrophone"){
       if (microphoneCheck == false) {
         PImage microphoneIcon = loadImage("microphone-off.png");
          microphoneIcon.resize(30, 30);
@@ -658,6 +604,51 @@ void createUI() {
 
   // --- End setup for controls --- //
 
+  /// Interaction Icons
+  
+   PImage infoIcon = loadImage("info.png");
+   infoIcon.resize(30, 30);
+    cp5.addButton("infoBoxToggle")
+     // .setValue(50)
+      .setPosition(width - 80, height - 55)
+      .setSize(30, 30)
+      .setImage(infoIcon);
+  
+   PImage soundIcon = loadImage("sound-on.png");
+    soundIcon.resize(30, 30);
+    cp5.addButton("switchSound")
+     // .setValue(50)
+      .setPosition(width - 130, height - 50)
+      .setSize(30, 30)
+      .setImage(soundIcon);
+    
+    PImage cameraIcon = loadImage("camera-off.png");
+    cameraIcon.resize(30, 30);
+    cp5.addButton("switchCamera")
+    //  .setValue(50)
+      .setPosition(width - 170, height - 50)
+      .setSize(30, 30)
+      .setImage(cameraIcon);
+      
+    PImage microphoneIcon = loadImage("microphone-off.png");
+    microphoneIcon.resize(30, 30);
+    cp5.addButton("switchMicrophone")
+      //.setValue(50)
+      .setPosition(width - 210, height - 50)
+      .setSize(30, 30)
+      .setImage(microphoneIcon);
+      
+      PImage locationIcon = loadImage("location.png");
+    locationIcon.resize(35, 35);
+    cp5.addButton("locationIcon")
+      //.setValue(50)
+      .setPosition(width - 310, height - 50)
+      .setSize(35, 35)
+      .setImage(locationIcon);
+  
+  
+  
+  ///
   //Start Date Time Picker//
   
   PImage buttonImage = loadImage(myBackground.backgroundImagesName.get(0));//loadImage("water.jpg");

@@ -2,7 +2,7 @@ PFont mono;
 color compassColor = color(1, 116, 217);
 color compassBGColor = color(1, 45, 90);
 
-boolean infoBoxVisible = true;
+boolean infoBoxVisible = false;
 
 String toolTipText = "Interaction Guide: \n\n • CLICK on screen to disperse particles \n • Use MICROPHONE to add to wind speed with voice \n • Set tracking color by inputing RGB values and Use CAMERA to follow the tracking color \n • Press SPACE to disperse particles along with color tracking";
 
