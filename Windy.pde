@@ -17,7 +17,7 @@ int scale = 20;
 int rows;
 int cols;
 
-int particleCount = 500;
+int particleCount = 100;
 
 PVector frc;
 
@@ -212,16 +212,16 @@ void draw() {
       //myBackground.draw(vel);
       xoff += inc;
 
-      stroke(0);
-      push();
-      stroke(0, 50);
-      strokeWeight(1);
-      translate(x * scale, y * scale);
-      rotate(vel.heading());
+      //stroke(0);
+      //push();
+      //stroke(0, 50);
+      //strokeWeight(1);
+      //translate(x * scale, y * scale);
+      //rotate(vel.heading());
 
       //   line(0, 0, scale, 0); display line
 
-      pop();
+      //pop();
     }
     yoff += inc;
     zoff += 0.001;
