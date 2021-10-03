@@ -6,7 +6,7 @@ SoundFile sample;
 AudioIn in;
 
 // if camera not working change cameraInput to one of the cameras listed in the console.
-int cameraInput = 0;
+int cameraInput = 2;
 
 boolean microphoneCheck = false;
 boolean cameraCheck = false;
@@ -30,8 +30,8 @@ color darkModeColor = color(255);
 Background myBackground;
 Textlabel backgroundViewLabel;
 Button selectDateTimeButton;
-Textfield StartTimeTF, StartYearTF, StartDayTF, StartMonthTF, EndTimeTF,EndYearTF, EndMonthTF, EndDayTF;
-Textlabel  BeginTL, EndTL, colorPickerLabel,updateLabel;
+Textfield StartTimeTF, StartYearTF, StartDayTF, StartMonthTF, EndTimeTF, EndYearTF, EndMonthTF, EndDayTF;
+Textlabel  BeginTL, EndTL, colorPickerLabel, updateLabel;
 Numberbox redNumberBox, greenNumberBox, blueNumberBox;
 Toggle cameraToggle, audioToggle, microphoneToggle;
 
@@ -84,11 +84,9 @@ void setup() {
   size(800, 600);
   cp5 = new ControlP5(this);
 
-
   setupBackground();
   createUI();
 
-  //background(255);
   rows = floor(height/scale) + 1;
   cols = floor(width/scale) + 1;
 
@@ -97,7 +95,9 @@ void setup() {
   for ( int i=0; i<particleCount; i++) {
     particles[i] = new Particle(i, particles);
   }
+
   fetchData();
+
   // adding a Wind Speed visualization as a ControlP5 slider
   cp5.addSlider("WindSpeedSlider")
     .setSize(100, 15)
@@ -108,10 +108,9 @@ void setup() {
 
 void fetchData() {
   // Load Wind Speed data from EIF portal in CSV format
-  //println("Fetching");
   windDirecrion = loadTable("https://eif-research.feit.uts.edu.au/api/csv/?rFromDate=" + fromDate + "T" + startHour + "%3A00%3A00&rToDate=" + toDate + "T" + endHour + "%3A00%3A00&rFamily=weather&rSensor=IWD", "csv");
   windSpeed = loadTable("https://eif-research.feit.uts.edu.au/api/csv/?rFromDate=" + fromDate + "T" + startHour + "%3A00%3A00&rToDate=" + toDate + "T" + endHour + "%3A00%3A00&rFamily=weather&rSensor=IWS", "csv");
-  //println("Fetched");
+
   // Extract data from CSV
   windDirectionArray = new float[windDirecrion.getRowCount()];
   windSpeedArray = new float[windSpeed.getRowCount()];
@@ -125,13 +124,15 @@ void fetchData() {
 }
 
 void draw() {
+  //Background for sky
   background(169, 231, 241);
+
   //Background for sand and plants
   myBackground.draw(PVector.fromAngle(radians(windDirectionArray[primaryIndex])));
+
+
   // --- Start draw method for track color --- //
   video.loadPixels();
-
-  showSourceData();
 
   // set trackColor to slider values
   trackColor = color(r, g, b);
@@ -143,13 +144,11 @@ void draw() {
   ellipse(width*0.34, height*0.901, 16, 16);
   popStyle();
 
-  threshold = 90;
+  threshold = 90; // accuracy of pixel to the target color
   float avgX = 0;
   float avgY = 0;
   int count = 0;
-
   float angle= 0;
-
 
   // loop through all pixels within video capture
   for (int x = 0; x < video.width; x++ ) {
@@ -188,7 +187,6 @@ void draw() {
   // --- End draw method for track color --- //
 
   float yoff = 0;
-  //loadPixels();
   for (int y = 0; y < rows; y++) {
     float xoff = 0;
     for (int x = 0; x < cols; x++) {
@@ -205,32 +203,18 @@ void draw() {
       PVector vel = PVector.fromAngle(radians(deviate));
 
       vel.setMag(1);
-
       flowfield[index] = vel;
-
-      // Background(sand dune)
-      //myBackground.draw(vel);
       xoff += inc;
-
-      //stroke(0);
-      //push();
-      //stroke(0, 50);
-      //strokeWeight(1);
-      //translate(x * scale, y * scale);
-      //rotate(vel.heading());
-
-      //   line(0, 0, scale, 0); display line
-
-      //pop();
     }
     yoff += inc;
     zoff += 0.001;
   }
+
   float instVel = map(windSpeedArray[primaryIndex], 0, 30, 0, 8);
 
   float volume = map(instVel, 0, 8, 0, 1);
-  sample.amp(volume);
 
+  sample.amp(volume);
 
   for (int i=0; i<particleCount; i++) {
     particles[i].follow(flowfield);
@@ -240,19 +224,15 @@ void draw() {
     particles[i].show();
     particles[i].edges();
 
-    // if mouse is pressed call clicked function
+    // when mouse is pressed disperse particles at mouseX,mouseY
     if (mousePressed == true) {
       particles[i].clicked(mouseX, mouseY);
     }
-
+    // when any key is pressed disperse particles at tracked color
     if (keyPressed == true) {
       particles[i].pressedSpace(avgX, avgY);
     }
   }
-
-  //updatePixels();
-  //noLoop();
-  //println(frameRate);
 
   if (secondaryindex % 100 == 0) {
     if (primaryIndex<windDirectionArray.length-1) {
@@ -263,40 +243,19 @@ void draw() {
   }
   secondaryindex = secondaryindex + 1;
 
-
   drawCompass(angle, instVel);
   showDate(timeStamps[primaryIndex]);
   drawInfoBox();
-
-}
-///////////////// end of draw function ////////
-
-
-void mouseArea() {
-  pushStyle();
-  stroke(255, 0, 0);
-  strokeWeight(2);
-  point(mouseX, mouseY);
-  rectMode(CENTER);
-  fill(255, 0, 0, 50);
-  ellipse(mouseX, mouseY, 100, 100);
-  popStyle();
-}
-
-void mousePressed() {
-  //microphoneToggle();
+  showSourceData();
 }
 
 void cameraToggle() {
   if (cameraCheck == false) {
-    // enable camera
-    video.stop();
+    video.stop(); // enable camera
   } else {
-    // disable camera
-    video.start();
+    video.start(); // disable camera
   }
   cameraCheck = !cameraCheck;
-  //println("camera check", cameraCheck);
 }
 
 void microphoneToggle() {
@@ -307,10 +266,8 @@ void microphoneToggle() {
     in = new AudioIn(this, 0);
     in.start();
     amp.input(in);
-    //sample.pause();
   }
   microphoneCheck = !microphoneCheck;
-  //println("newVal ", microphoneCheck);
 }
 
 void audioToggle() {
@@ -323,7 +280,6 @@ void audioToggle() {
     sample.play();
   }
   audioCheck = !audioCheck;
-  //println("audio check", audioCheck);
 }
 
 // --- Start color tracking helper functions   --- //
@@ -340,149 +296,132 @@ float distSq(float x1, float y1, float z1, float x2, float y2, float z2) {
 // --- End color tracking helper functions   --- //
 
 //Date Time Picker//
-
-void controlEvent(ControlEvent theEvent) {     
-     if(theEvent.isAssignableFrom(Textfield.class)){
-       if(theEvent.getName() == "StartTime"){
-         startHour = theEvent.getStringValue();
-         fetchData();
-       }
-       if(theEvent.getName() == "StartYear"){
-         fromDate = theEvent.getStringValue() + "-" + fromDate.split("-",3)[1] + "-" + fromDate.split("-",3)[2];
-         fetchData();
-       }
-       if(theEvent.getName() == "StartMonth"){
-         fromDate =  fromDate.split("-",3)[0] + "-" + theEvent.getStringValue() + "-" + fromDate.split("-",3)[2];
-         fetchData();
-       }
-       if(theEvent.getName() == "StartDay"){
-         fromDate =  fromDate.split("-",3)[0] + "-" + fromDate.split("-",3)[1] + "-" + theEvent.getStringValue();
-         fetchData();
-       }// begin date
-       
-        if(theEvent.getName() == "EndTime"){
-         endHour = theEvent.getStringValue();
-         fetchData();
-       }
-       if(theEvent.getName() == "EndYear"){
-         toDate = theEvent.getStringValue() + "-" + toDate.split("-",3)[1] + "-" + toDate.split("-",3)[2];
-         fetchData();
-       }
-       if(theEvent.getName() == "EndMonth"){
-         toDate =  toDate.split("-",3)[0] + "-" + theEvent.getStringValue() + "-" + toDate.split("-",3)[2];
-         fetchData();
-       }
-       if(theEvent.getName() == "EndDay"){
-         toDate =  toDate.split("-",3)[0] + "-" + toDate.split("-",3)[1] + "-" + theEvent.getStringValue();
-         fetchData();
-       }
-     }else if(theEvent.isAssignableFrom(Button.class)){
-       if(theEvent.getName() == "changeBackground"){
-         myBackground.sideView = !myBackground.sideView;
-         if(myBackground.sideView) {
-           PImage buttonImage = loadImage(myBackground.backgroundImagesName.get(0));//loadImage("water.jpg");
-           buttonImage.resize(40,40);
-           theEvent.controller().setImage(buttonImage);  
-           //cp5.getController("BackgroundView").setLabel("Side View");
-           BeginTL.setColor(compassBGColor);
-           updateLabel.setColor(compassBGColor);
-           EndTL.setColor(compassBGColor);
-           EndTimeTF.setColorLabel(compassBGColor);
-           EndYearTF.setColorLabel(compassBGColor);
-           EndMonthTF.setColorLabel(compassBGColor);
-           EndDayTF.setColorLabel(compassBGColor);
-           backgroundViewLabel.setColor(compassBGColor);
-           colorPickerLabel.setColor(compassBGColor);
-           redNumberBox.setColorLabel(compassBGColor);
-           greenNumberBox.setColorLabel(compassBGColor);
-           blueNumberBox.setColorLabel(compassBGColor);
-
-           
-         } else {
-           PImage buttonImage = loadImage(myBackground.backgroundImagesName.get(1));//loadImage("water.jpg");
-           buttonImage.resize(40,40);
-           theEvent.controller().setImage(buttonImage);
-           //cp5.getController("BackgroundView").setLabel("Top View");
-           //cp5.getController("End").setColor(color(255));
-           BeginTL.setColor(darkModeColor);
-           updateLabel.setColor(darkModeColor);
-           EndTL.setColor(darkModeColor);
-           EndTimeTF.setColorLabel(darkModeColor);
-           EndYearTF.setColorLabel(darkModeColor);
-           EndMonthTF.setColorLabel(darkModeColor);
-           EndDayTF.setColorLabel(darkModeColor);
-           backgroundViewLabel.setColor(darkModeColor);
-           colorPickerLabel.setColor(darkModeColor);
-           redNumberBox.setColorLabel(darkModeColor);
-           greenNumberBox.setColorLabel(darkModeColor);
-           blueNumberBox.setColorLabel(darkModeColor);
-
-         }
-           backgroundViewLabel.setText(!myBackground.sideView?"Front View": "Top View");
-           calendarImage =  (myBackground.sideView?  loadImage("blueCal.png") : loadImage("whiteCal.png"));
-           calendarImage.resize(30, 30);
-           selectDateTimeButton.setImage(null);
-           selectDateTimeButton.setImage(calendarImage);
-       }else if(theEvent.getName() == "selectDateTime"){
-         toggleDateFields();
-       }
-       
-    else if(theEvent.getName() == "infoBoxToggle"){
-      toggleInfoBox();
+void controlEvent(ControlEvent theEvent) {
+  if (theEvent.isAssignableFrom(Textfield.class)) {
+    if (theEvent.getName() == "StartTime") {
+      startHour = theEvent.getStringValue();
+      fetchData();
     }
-    else if(theEvent.getName() == "switchCamera"){
+    if (theEvent.getName() == "StartYear") {
+      fromDate = theEvent.getStringValue() + "-" + fromDate.split("-", 3)[1] + "-" + fromDate.split("-", 3)[2];
+      fetchData();
+    }
+    if (theEvent.getName() == "StartMonth") {
+      fromDate =  fromDate.split("-", 3)[0] + "-" + theEvent.getStringValue() + "-" + fromDate.split("-", 3)[2];
+      fetchData();
+    }
+    if (theEvent.getName() == "StartDay") {
+      fromDate =  fromDate.split("-", 3)[0] + "-" + fromDate.split("-", 3)[1] + "-" + theEvent.getStringValue();
+      fetchData();
+    }// begin date
+
+    if (theEvent.getName() == "EndTime") {
+      endHour = theEvent.getStringValue();
+      fetchData();
+    }
+    if (theEvent.getName() == "EndYear") {
+      toDate = theEvent.getStringValue() + "-" + toDate.split("-", 3)[1] + "-" + toDate.split("-", 3)[2];
+      fetchData();
+    }
+    if (theEvent.getName() == "EndMonth") {
+      toDate =  toDate.split("-", 3)[0] + "-" + theEvent.getStringValue() + "-" + toDate.split("-", 3)[2];
+      fetchData();
+    }
+    if (theEvent.getName() == "EndDay") {
+      toDate =  toDate.split("-", 3)[0] + "-" + toDate.split("-", 3)[1] + "-" + theEvent.getStringValue();
+      fetchData();
+    }
+  } else if (theEvent.isAssignableFrom(Button.class)) {
+    if (theEvent.getName() == "changeBackground") {
+      myBackground.sideView = !myBackground.sideView;
+      if (myBackground.sideView) {
+        PImage buttonImage = loadImage(myBackground.backgroundImagesName.get(0));//loadImage("water.jpg");
+        buttonImage.resize(40, 40);
+        theEvent.controller().setImage(buttonImage);
+        //cp5.getController("BackgroundView").setLabel("Side View");
+        BeginTL.setColor(compassBGColor);
+        updateLabel.setColor(compassBGColor);
+        EndTL.setColor(compassBGColor);
+        EndTimeTF.setColorLabel(compassBGColor);
+        EndYearTF.setColorLabel(compassBGColor);
+        EndMonthTF.setColorLabel(compassBGColor);
+        EndDayTF.setColorLabel(compassBGColor);
+        backgroundViewLabel.setColor(compassBGColor);
+        colorPickerLabel.setColor(compassBGColor);
+        redNumberBox.setColorLabel(compassBGColor);
+        greenNumberBox.setColorLabel(compassBGColor);
+        blueNumberBox.setColorLabel(compassBGColor);
+      } else {
+        PImage buttonImage = loadImage(myBackground.backgroundImagesName.get(1));//loadImage("water.jpg");
+        buttonImage.resize(40, 40);
+        theEvent.controller().setImage(buttonImage);
+        BeginTL.setColor(darkModeColor);
+        updateLabel.setColor(darkModeColor);
+        EndTL.setColor(darkModeColor);
+        EndTimeTF.setColorLabel(darkModeColor);
+        EndYearTF.setColorLabel(darkModeColor);
+        EndMonthTF.setColorLabel(darkModeColor);
+        EndDayTF.setColorLabel(darkModeColor);
+        backgroundViewLabel.setColor(darkModeColor);
+        colorPickerLabel.setColor(darkModeColor);
+        redNumberBox.setColorLabel(darkModeColor);
+        greenNumberBox.setColorLabel(darkModeColor);
+        blueNumberBox.setColorLabel(darkModeColor);
+      }
+      backgroundViewLabel.setText(!myBackground.sideView?"Front View": "Top View");
+      calendarImage =  (myBackground.sideView?  loadImage("blueCal.png") : loadImage("whiteCal.png"));
+      calendarImage.resize(30, 30);
+      selectDateTimeButton.setImage(null);
+      selectDateTimeButton.setImage(calendarImage);
+    } else if (theEvent.getName() == "selectDateTime") {
+      toggleDateFields();
+    } else if (theEvent.getName() == "infoBoxToggle") {
+      toggleInfoBox();
+    } else if (theEvent.getName() == "switchCamera") {
       if (cameraCheck == false) {
         PImage cameraIcon = loadImage("camera-off.png");
-         cameraIcon.resize(30, 30);
+        cameraIcon.resize(30, 30);
         theEvent.controller().setImage(cameraIcon);
       } else {
         PImage cameraIcon = loadImage("camera-on.png");
-         cameraIcon.resize(30, 30);
+        cameraIcon.resize(30, 30);
         theEvent.controller().setImage(cameraIcon);
       }
       cameraToggle();
-    }
-   else if(theEvent.getName() == "switchMicrophone"){
+    } else if (theEvent.getName() == "switchMicrophone") {
       if (microphoneCheck == false) {
         PImage microphoneIcon = loadImage("microphone-off.png");
-         microphoneIcon.resize(30, 30);
+        microphoneIcon.resize(30, 30);
         theEvent.controller().setImage(microphoneIcon);
       } else {
         PImage microphoneIcon = loadImage("microphone-on.png");
-         microphoneIcon.resize(30, 30);
+        microphoneIcon.resize(30, 30);
         theEvent.controller().setImage(microphoneIcon);
       }
       microphoneToggle();
-    }
-    else if(theEvent.getName() == "switchSound"){
+    } else if (theEvent.getName() == "switchSound") {
       if (audioCheck == false) {
         PImage soundIcon = loadImage("sound-off.png");
-         soundIcon.resize(30, 30);
+        soundIcon.resize(30, 30);
         theEvent.controller().setImage(soundIcon);
       } else {
         PImage soundIcon = loadImage("sound-on.png");
-         soundIcon.resize(30, 30);
+        soundIcon.resize(30, 30);
         theEvent.controller().setImage(soundIcon);
       }
       audioToggle();
-    }
-     else if(theEvent.getName() == "locationIcon"){
-       if(startupCheck > 0){
-         link("https://goo.gl/maps/eKqbSjEP19dWP1dh9");
-       }
+    } else if (theEvent.getName() == "locationIcon") {
+      if (startupCheck > 0) {
+        link("https://goo.gl/maps/eKqbSjEP19dWP1dh9");
+      }
       startupCheck++;
     }
-     }
-
+  }
 }
 
 //Setting Button Image background
 void setupBackground() {
   myBackground =  new Background( new PVector(0.0, 0.0));
-  //cp5 = new ControlP5(this);
-  //font = createFont("arial", 20);
-  
-  
 }
 
 void toggleDateFields() {
@@ -500,18 +439,13 @@ void toggleDateFields() {
   cp5.getController("Update").setVisible(dateVisible);
 }
 
-
-
 //Create UI //
 void createUI() {
-  
   fill(255);
   font = createFont("arial", 12);
 
   amp = new Amplitude(this);
   in = new AudioIn(this, 0);
-  ////in.start();
-  //amp.input(in);
 
   // Load and play a soundfile and loop it.
   sample = new SoundFile(this, "desert_wind.mp3");
@@ -534,39 +468,6 @@ void createUI() {
   // --- End setup for color tracking   --- //
 
   // --- Start setup for controls --- //
-  //cp5 = new ControlP5(this);
-
-//  // camera control
-//  cp5.addToggle("cameraToggle")
-//    .setPosition(width*0.7, height*0.92)
-//    .setSize(50, 20)
-//    .setValue(false)
-//    .setMode(ControlP5.SWITCH)
-//    .setLabel("Camera")
-//    .setColorLabel(0)
-//    ;
-
-//  // audio control
-//  cp5.addToggle("audioToggle")
-//    .setPosition(width*0.9, height*0.92)
-//    .setSize(50, 20)
-//    .setValue(true)
-//    .setMode(ControlP5.SWITCH)
-//    .setLabel("Audio")
-//    .setColorLabel(0)
-//    ;
-
-//  // microphone control
-//  cp5.addToggle("microphoneToggle")
-//    .setPosition(width*0.8, height*0.92)
-//    .setSize(50, 20)
-//    .setValue(false)
-//    .setMode(ControlP5.SWITCH)
-//    .setLabel("Microphone")
-//    .setColorLabel(0)
-//    ;
-
-
   // color picker label
   colorPickerLabel = cp5.addLabel("PICK COLOR TO TRACK")
     .setPosition(width*0.195, height*0.895)
@@ -583,7 +484,7 @@ void createUI() {
     .setScrollSensitivity(2)
     ;
 
-  // g
+  // green
   greenNumberBox = cp5.addNumberbox("g")
     .setPosition(width*0.24, height*0.92)
     .setSize(30, 20)
@@ -593,7 +494,7 @@ void createUI() {
     .setScrollSensitivity(2)
     ;
 
-  // b
+  // blue
   blueNumberBox = cp5.addNumberbox("b")
     .setPosition(width*0.28, height*0.92)
     .setSize(30, 20)
@@ -602,84 +503,72 @@ void createUI() {
     .setRange(0, 255)
     .setScrollSensitivity(2)
     ;
-
   // --- End setup for controls --- //
 
   /// Interaction Icons
-  
-   PImage infoIcon = loadImage("info.png");
-   infoIcon.resize(30, 30);
-    cp5.addButton("infoBoxToggle")
-     // .setValue(50)
-      .setPosition(width - 90, height - 50)
-      .setSize(30, 30)
-      .setImage(infoIcon);
-  
-   PImage soundIcon = loadImage("sound-on.png");
-    soundIcon.resize(30, 30);
-    cp5.addButton("switchSound")
-     // .setValue(50)
-      .setPosition(width - 130, height - 50)
-      .setSize(30, 30)
-      .setImage(soundIcon);
-    
-    PImage cameraIcon = loadImage("camera-off.png");
-    cameraIcon.resize(30, 30);
-    cp5.addButton("switchCamera")
-    //  .setValue(50)
-      .setPosition(width - 170, height - 50)
-      .setSize(30, 30)
-      .setImage(cameraIcon);
-      
-    PImage microphoneIcon = loadImage("microphone-off.png");
-    microphoneIcon.resize(30, 30);
-    cp5.addButton("switchMicrophone")
-      //.setValue(50)
-      .setPosition(width - 210, height - 50)
-      .setSize(30, 30)
-      .setImage(microphoneIcon);
-      
-      PImage locationIcon = loadImage("location.png");
-    locationIcon.resize(35, 35);
-    cp5.addButton("locationIcon")
-      //.setValue(50)
-      .setPosition(width - 415, height - 100)
-      .setSize(35, 35)
-      .setImage(locationIcon);
-  
-  
-  
-  ///
+  PImage infoIcon = loadImage("info.png");
+  infoIcon.resize(30, 30);
+  cp5.addButton("infoBoxToggle")
+    .setPosition(width - 90, height - 50)
+    .setSize(30, 30)
+    .setImage(infoIcon);
+
+  PImage soundIcon = loadImage("sound-on.png");
+  soundIcon.resize(30, 30);
+  cp5.addButton("switchSound")
+    .setPosition(width - 130, height - 50)
+    .setSize(30, 30)
+    .setImage(soundIcon);
+
+  PImage cameraIcon = loadImage("camera-off.png");
+  cameraIcon.resize(30, 30);
+  cp5.addButton("switchCamera")
+    .setPosition(width - 170, height - 50)
+    .setSize(30, 30)
+    .setImage(cameraIcon);
+
+  PImage microphoneIcon = loadImage("microphone-off.png");
+  microphoneIcon.resize(30, 30);
+  cp5.addButton("switchMicrophone")
+    .setPosition(width - 210, height - 50)
+    .setSize(30, 30)
+    .setImage(microphoneIcon);
+
+  PImage locationIcon = loadImage("location.png");
+  locationIcon.resize(35, 35);
+  cp5.addButton("locationIcon")
+    .setPosition(width - 415, height - 100)
+    .setSize(35, 35)
+    .setImage(locationIcon);
+
   //Start Date Time Picker//
-  
   PImage buttonImage = loadImage(myBackground.backgroundImagesName.get(0));//loadImage("water.jpg");
   buttonImage.resize(40, 40);
   cp5.addButton("changeBackground")
-      .setPosition(20,height - 60)
-      .setSize(40,40)
-      .setImage(buttonImage)
-       ;
-     
+    .setPosition(20, height - 60)
+    .setSize(40, 40)
+    .setImage(buttonImage)
+    ;
+
   backgroundViewLabel = cp5.addLabel("BackgroundViewLabel")
-      .setPosition(15,height - 70)
-      .setColor(compassBGColor)
-      .setText(!myBackground.sideView?"Front View": "Top View");
-      
-  //calendarImage = loadImage("blueCal.png");
+    .setPosition(15, height - 70)
+    .setColor(compassBGColor)
+    .setText(!myBackground.sideView?"Front View": "Top View");
+
   calendarImage =  (myBackground.sideView?  loadImage("blueCal.png") : loadImage("whiteCal.png"));
   calendarImage.resize(30, 30);
   selectDateTimeButton = cp5.addButton("selectDateTime")
-     .setPosition(width -50, 5)
-     .setSize(30, 30)
-     .setImage(calendarImage);
-        
+    .setPosition(width -50, 5)
+    .setSize(30, 30)
+    .setImage(calendarImage);
+
   StartTimeTF = cp5.addTextfield("StartTime")
     .setFont(font)
     .setPosition(width -50, 40)
     .setSize(30, 30)
     .setColor(color(255))
     .setColorBackground(compassBGColor)
-    .setColorActive(color(255,255,255))
+    .setColorActive(color(255, 255, 255))
     .setText(startHour)
     .setAutoClear(false)
     .setLabel("")
@@ -693,7 +582,7 @@ void createUI() {
     .setText(fromDate.split("-", 3)[0])
     .setColor(color(255))
     .setColorBackground(compassBGColor)
-    .setColorActive(color(255,255,255))
+    .setColorActive(color(255, 255, 255))
     .setAutoClear(false)
     .setVisible(dateVisible)
     .setLabel("")
@@ -710,7 +599,7 @@ void createUI() {
     .setVisible(dateVisible)
     .setColor(color(255))
     .setColorBackground(compassBGColor)
-    .setColorActive(color(255,255,255));
+    .setColorActive(color(255, 255, 255));
 
   StartDayTF = cp5.addTextfield("StartDay")
     .setFont(font)
@@ -723,7 +612,7 @@ void createUI() {
     .setVisible(dateVisible)
     .setColor(color(255))
     .setColorBackground(compassBGColor)
-    .setColorActive(color(255,255,255));
+    .setColorActive(color(255, 255, 255));
 
   BeginTL = cp5.addTextlabel("Begin")
     .setText("Start")
@@ -740,10 +629,6 @@ void createUI() {
     .setSize(50, 30)
     .setVisible(dateVisible)
     .setColor(color(compassBGColor));
-     //cp5.begin();
-     // cp5.addBackground("abc")
-     // .setBackgroundColor(color(1,116,217));
-     //  cp5.end();
 
   EndTimeTF = cp5.addTextfield("EndTime")
     .setFont(font)
@@ -752,23 +637,13 @@ void createUI() {
     .setColor(color(255))
     .setColorLabel(compassBGColor)
     .setColorBackground(compassBGColor)
-    .setColorActive(color(255,255,255))
+    .setColorActive(color(255, 255, 255))
     .setText(endHour)
     .setAutoClear(false)
     .setVisible(dateVisible)
     .setLabel("Time")
     .setLabelVisible(true);
-  
-    //cp5.addTextfield("EndTime")
-    //.setValue(0)
-    //.setPosition(width -50, 100)
-    //.setSize(30, 30)
-    //.setColorBackground(compassBGColor)
-    //.setColor(255)
-    //.setColorForeground(color(255,0,0))
-    //.setColorActive(color(255,255,255));
-    
-   
+
   EndYearTF = cp5.addTextfield("EndYear")
     .setFont(font)
     .setPosition(width -100, 100)
@@ -777,7 +652,7 @@ void createUI() {
     .setColor(color(255))
     .setColorLabel(compassBGColor)
     .setColorBackground(compassBGColor)
-    .setColorActive(color(255,255,255))
+    .setColorActive(color(255, 255, 255))
     .setAutoClear(false)
     .setVisible(dateVisible)
     .setLabel("Year")
@@ -795,7 +670,7 @@ void createUI() {
     .setColor(color(255))
     .setColorLabel(compassBGColor)
     .setColorBackground(compassBGColor)
-    .setColorActive(color(255,255,255));
+    .setColorActive(color(255, 255, 255));
 
   EndDayTF = cp5.addTextfield("EndDay")
     .setFont(font)
@@ -809,7 +684,7 @@ void createUI() {
     .setColor(color(255))
     .setColorBackground(compassBGColor)
     .setColorLabel(compassBGColor)
-    .setColorActive(color(255,255,255));
+    .setColorActive(color(255, 255, 255));
 
   EndTL = cp5.addTextlabel("End")
     .setText("End")
@@ -817,8 +692,7 @@ void createUI() {
     .setPosition(width - 250, 110)
     .setSize(50, 30)
     .setVisible(dateVisible)
-    .setColor(color(compassBGColor));      
-
+    .setColor(color(compassBGColor));
 }
 
 void showSourceData() {
@@ -831,4 +705,7 @@ void showSourceData() {
   text(dataSource2, width/2, height*0.96);
   popStyle();
   popMatrix();
+}
+
+void mousePressed() {
 }
