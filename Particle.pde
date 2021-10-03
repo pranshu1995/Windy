@@ -18,7 +18,7 @@ public class Particle {
     this.acc = new PVector(0, 0);
     this.others= otherParticles;
     this.id= id;
-    this.radius= 2;
+    this.radius= 4;
 
   }
 

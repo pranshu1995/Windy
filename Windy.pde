@@ -418,7 +418,7 @@ void controlEvent(ControlEvent theEvent) {
            blueNumberBox.setColorLabel(darkModeColor);
 
          }
-           backgroundViewLabel.setText(!myBackground.sideView?"Side View": "Top View");
+           backgroundViewLabel.setText(!myBackground.sideView?"Front View": "Top View");
            calendarImage =  (myBackground.sideView?  loadImage("blueCal.png") : loadImage("whiteCal.png"));
            calendarImage.resize(30, 30);
            selectDateTimeButton.setImage(null);
@@ -610,7 +610,7 @@ void createUI() {
    infoIcon.resize(30, 30);
     cp5.addButton("infoBoxToggle")
      // .setValue(50)
-      .setPosition(width - 80, height - 55)
+      .setPosition(width - 90, height - 50)
       .setSize(30, 30)
       .setImage(infoIcon);
   
@@ -642,7 +642,7 @@ void createUI() {
     locationIcon.resize(35, 35);
     cp5.addButton("locationIcon")
       //.setValue(50)
-      .setPosition(width - 310, height - 50)
+      .setPosition(width - 415, height - 100)
       .setSize(35, 35)
       .setImage(locationIcon);
   
@@ -662,7 +662,7 @@ void createUI() {
   backgroundViewLabel = cp5.addLabel("BackgroundViewLabel")
       .setPosition(15,height - 70)
       .setColor(compassBGColor)
-      .setText(!myBackground.sideView?"Side View": "Top View");
+      .setText(!myBackground.sideView?"Front View": "Top View");
       
   //calendarImage = loadImage("blueCal.png");
   calendarImage =  (myBackground.sideView?  loadImage("blueCal.png") : loadImage("whiteCal.png"));

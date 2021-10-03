@@ -4,7 +4,7 @@ color compassBGColor = color(1, 45, 90);
 
 boolean infoBoxVisible = false;
 
-String toolTipText = "Interaction Guide: \n\n • CLICK on screen to disperse particles \n • Use MICROPHONE to add to wind speed with voice \n • Set tracking color by inputing RGB values and Use CAMERA to follow the tracking color \n • Press SPACE to disperse particles along with color tracking";
+String toolTipText = "Interaction Guide: \n\n • CLICK on screen to disperse particles \n • Use MICROPHONE to add to wind speed with voice \n • Set tracking color by inputing RGB values and use CAMERA to follow the tracking color \n • Press SPACE to disperse particles along with color tracking \n • Switch the background between Top View and Front View\n • Use calendar to view data for a specific time period and press ENTER to update the data";
 
 void setting_up(){
   // Code to be put in setup():
@@ -66,10 +66,10 @@ void drawInfoBox(){
   if(infoBoxVisible){
     fill(200,200);
     stroke(20,200);
-    rect(width - 200, height - 240, 190, 180, 25);
+    rect(width - 200, height - 325, 190, 270, 25);
     
     fill(1, 45, 90);
     textAlign(LEFT);
-    text(toolTipText, width - 190, height - 230, 170, 160);
+    text(toolTipText, width - 190, height - 315, 170, 265);
   }
 }
